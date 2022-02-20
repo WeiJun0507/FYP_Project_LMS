@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import 'package:fyp_lms/ui/intro_screen.dart';
+import 'package:fyp_lms/ui/splash_screen.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import 'routes/routes.dart';
@@ -13,26 +14,11 @@ void main() async {
   await initialize();
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
-  runApp(const HomeScreen());
+  runApp(const StarterPage());
 }
 
-class StarterPage extends StatefulWidget {
+class StarterPage extends StatelessWidget {
   const StarterPage({Key? key}) : super(key: key);
-
-  @override
-  State<StarterPage> createState() => _HomeScreenState();
-}
-
-class _HomeScreenState extends State<StarterPage> {
-  SharedPreferences? sPref;
-
-
-  @override
-  void initState() {
-    super.initState();
-
-    SharedPreferences.getInstance().then((value) => sPref = value);
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,15 +26,9 @@ class _HomeScreenState extends State<StarterPage> {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //use sharedPreferences to identify
-      home: sPref?.getBool('isLogging') != null ? const HomeScreen() : const IntroScreen(),
-      initialRoute: '/',
+      home: const SplashScreen(),
+      initialRoute: '/SplashScreen',
       routes: routesName,
     );
-  }
-
-  @override
-  void dispose() {
-    sPref!.clear();
-    super.dispose();
   }
 }
