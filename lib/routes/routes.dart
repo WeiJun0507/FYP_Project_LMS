@@ -8,6 +8,6 @@ Map<String, Widget Function(BuildContext)> routesName = {
   '/SplashScreen': (context) => const SplashScreen(),
 
   '/': (context) => const HomeScreen(),
-  '/login': (context) => const IntroScreen(),
+  '/Login': (context) => const IntroScreen(),
 
 };

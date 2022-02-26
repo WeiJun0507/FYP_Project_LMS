@@ -29,16 +29,13 @@ class _SplashScreenState extends State<SplashScreen> {
     bool? isLoggedIn;
     if (sPrefs != null) isLoggedIn = sPrefs!.getBool('isLoggedIn');
     if (isLoggedIn != null && isLoggedIn) {
-      Navigator.of(context).replace(
-          oldRoute: MaterialPageRoute(builder: (context) => const SplashScreen()),
-          newRoute: MaterialPageRoute(builder: (context) => const HomeScreen()));
+      Navigator.of(context).pushReplacementNamed('/');
     }
 
     if (isLoggedIn == null || ( !isLoggedIn)) {
-      Navigator.of(context).replace(
-          oldRoute: MaterialPageRoute(builder: (context) => const SplashScreen()),
-          newRoute: MaterialPageRoute(builder: (context) => const IntroScreen()));
+      Navigator.of(context).pushReplacementNamed('/Login');
     }
+    Future.delayed(const Duration(milliseconds: 300));
   }
 
   @override

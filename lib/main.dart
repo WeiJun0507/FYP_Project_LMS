@@ -26,7 +26,6 @@ class StarterPage extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       //use sharedPreferences to identify
-      home: const SplashScreen(),
       initialRoute: '/SplashScreen',
       routes: routesName,
     );
