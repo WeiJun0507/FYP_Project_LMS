@@ -11,6 +11,7 @@ const BG_COLOR_2 = Color(0xFF38A4D5);
 const BG_COLOR_3 = Color(0xFF40A2CF);
 const BG_COLOR_4 = Color(0xFF3B57E1);
 
+const COLOR_INVALID = Color(0xFFCCCCCC);
 const HINT_TEXT_COLOR = Color(0xFF555555);
 
 //INPUT BORDER COLOR

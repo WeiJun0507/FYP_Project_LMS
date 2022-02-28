@@ -1,5 +1,3 @@
-import 'dart:ui';
-
 import 'package:flutter/material.dart';
 
 import 'package:fyp_lms/utils/constant.dart';
@@ -30,7 +28,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
   String? confirmPasswordErrorMessage;
   bool confirmPasswordVisibility2 = false;
 
-  bool _nameAutoFocus = true;
+  //bool _nameAutoFocus = true;
 
 
   //===================== METHODS ====================================
