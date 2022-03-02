@@ -4,6 +4,7 @@ import 'package:fyp_lms/utils/constant.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
+import 'package:fyp_lms/firebase_auth/auth_services.dart';
 
 class IntroScreen extends StatefulWidget {
   const IntroScreen({Key? key}) : super(key: key);
@@ -15,6 +16,7 @@ class IntroScreen extends StatefulWidget {
 class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStateMixin{
   //====================== VARIABLES =================================
 
+  AuthService _auth = AuthService();
   bool _registerState = false;
 
   TextEditingController? _usernameController;
@@ -44,14 +46,19 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
     usernameErrorMessage = null; passwordErrorMessage = null;
 
     if (_usernameController!.text.validateEmail() == false) usernameErrorMessage = 'Please enter valid email address';
-    if (_passwordController!.text.length < 8) passwordErrorMessage = 'Password Must be at least 8 characters';
+    if (_passwordController!.text.length < 5) passwordErrorMessage = 'Password Must be at least 5 characters';
 
     setState(() {});
     if (passwordErrorMessage != null || usernameErrorMessage != null) return;
-
-
+    if (passwordErrorMessage == null || usernameErrorMessage == null) {
+      dynamic result = _auth.signinWithEmailAndPassword(_usernameController!.text, _passwordController!.text);
+      if( result ==null){
+        print("could not sign in with those credentials");
+      } else{
+        //push second screen
+      }
+    }
   }
-
   registerViaEmail() {
     usernameErrorMessage = null; passwordErrorMessage = null; confirmPasswordErrorMessage = null;
 
@@ -61,8 +68,14 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
 
     setState(() {});
     if (passwordErrorMessage != null || usernameErrorMessage != null || confirmPasswordErrorMessage != null) return;
-
-
+    if (passwordErrorMessage == null || usernameErrorMessage == null || confirmPasswordErrorMessage == null) {
+      dynamic result = _auth.registerWithEmailAndPassword(_usernameController!.text, _passwordController!.text);
+      if( result == null ){
+        print("could not sign up with those credentials");
+      } else{
+        //push verificationscreen
+      }
+    }
   }
 
 
@@ -100,10 +113,9 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
               children: [
                 // LOGO
                 Center(
-                  child: Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    height: MediaQuery.of(context).size.width / 2,
-                    color: Colors.blue,
+                  child: Image(
+                    image: AssetImage('assets/lmsMainLogo-removebg.png'),
+                    height: 270
                   ),
                 ),
                 const SizedBox(height: LARGE_V_GAP,),
