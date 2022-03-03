@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_lms/ui/home/home_screen.dart';
-import 'package:fyp_lms/ui/intro_screen.dart';
+import 'package:fyp_lms/ui/auth_screen/intro_screen.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class SplashScreen extends StatefulWidget {
