@@ -1,6 +1,10 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import 'package:fyp_lms/utils/constant.dart';
+import 'package:fyp_lms/utils/dialog.dart';
+import 'package:fyp_lms/web_service/model/user/account.dart';
 
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -42,7 +46,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
     _confirmPasswordController = TextEditingController();
   }
 
-  loginViaEmail() {
+  loginViaEmail(BuildContext context) {
     usernameErrorMessage = null; passwordErrorMessage = null;
 
     if (_usernameController!.text.validateEmail() == false) usernameErrorMessage = 'Please enter valid email address';
@@ -51,16 +55,45 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
     setState(() {});
     if (passwordErrorMessage != null || usernameErrorMessage != null) return;
     if (passwordErrorMessage == null || usernameErrorMessage == null) {
-      dynamic result = _auth.signInWithEmailAndPassword(_usernameController!.text, _passwordController!.text);
-      if( result == null){
-        print("could not sign in with those credentials");
-      } else{
-        //push second screen
-      }
+      showLoading(context);
+      final result = _auth.signInWithEmailAndPassword(_usernameController!.text, _passwordController!.text);
+      result.then((value) async {
+        switch(value) {
+          case 1:
+            Navigator.of(context).pushNamed('/VerificationScreen');
+            break;
+
+          case 2:
+            FirebaseAuth firebaseAuth = FirebaseAuth.instance;
+            FirebaseFirestore _database = FirebaseFirestore.instance;
+
+            DocumentSnapshot data = await _database.collection('account').doc(firebaseAuth.currentUser!.uid).get();
+
+            if (data.data() == null || (data.data() as Map<String, dynamic>)['displayName'] == null) {
+              Navigator.of(context).pushNamed('/CreateAccountScreen');
+            } else {
+              Account createdUser = Account.fromJson(data.data() as Map<String,dynamic>);
+              SharedPreferences _sPref = await SharedPreferences.getInstance();
+              _sPref.setBool('isLoggedIn', true);
+              _sPref.setString('account', createdUser.id.toString());
+              _sPref.setString('username', createdUser.displayName!);
+              _sPref.setInt('accountType', 1);
+              _sPref.setBool('verified', firebaseAuth.currentUser!.emailVerified);
+
+              Navigator.of(context).pushReplacementNamed('/');
+            }
+            break;
+
+          default:
+            break;
+        }
+      },onError: (e) {
+        showInfoDialog(context, null, e.toString());
+      });
     }
   }
 
-  registerViaEmail() {
+  registerViaEmail(BuildContext context) async {
     usernameErrorMessage = null; passwordErrorMessage = null; confirmPasswordErrorMessage = null;
 
     if (_usernameController!.text.validateEmail() == false) usernameErrorMessage = 'Please enter valid email address';
@@ -69,14 +102,25 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
 
     setState(() {});
     if (passwordErrorMessage != null || usernameErrorMessage != null || confirmPasswordErrorMessage != null) return;
-    if (passwordErrorMessage == null || usernameErrorMessage == null || confirmPasswordErrorMessage == null) {
-      dynamic result = _auth.registerWithEmailAndPassword(_usernameController!.text, _passwordController!.text);
-      if( result == null ){
-        print("could not sign up with those credentials");
-      } else{
+
+    final result = _auth.registerWithEmailAndPassword(_usernameController!.text, _passwordController!.text);
+    result.then((response) {
+      if (response) {
         Navigator.of(context).pushNamed('/VerificationScreen');
+      } else {
+        showInfoDialog(context, null, 'Something went wrong. Please try again.');
       }
-    }
+    }, onError: (e) {
+      if (e is FirebaseAuthException) {
+        setState(() {
+          usernameErrorMessage = 'Email already taken.';
+        });
+        return;
+      } else {
+        showInfoDialog(context, null, 'Something went wrong. Please try again.');
+      }
+    });
+
   }
 
 
@@ -122,7 +166,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                 const SizedBox(height: LARGE_V_GAP,),
                 // USERNAME
                 Container(
-                  height: 56,
+                  height: usernameErrorMessage != null ? 80 : 56,
                   margin: const EdgeInsets.only(top: LARGE_V_GAP, bottom: SMALL_V_GAP),
                   child: TextField(
                     controller: _usernameController,
@@ -170,14 +214,14 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
 
                 // PASSWORD
                 Container(
-                  height: 56,
+                  height: passwordErrorMessage != null ? 80 : 56,
                   margin: const EdgeInsets.only(top: LARGE_V_GAP, bottom: SMALL_V_GAP),
                   child: TextField(
                     controller: _passwordController,
                     maxLines: 1,
                     minLines: 1,
                     keyboardType: TextInputType.visiblePassword,
-                    obscureText: passwordVisibility,
+                    obscureText: !passwordVisibility,
                     onChanged: (value) {
                       setState(() {
 
@@ -206,7 +250,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                       labelStyle: GoogleFonts.poppins().copyWith(color: BORDER_BLUE),
                       errorText: passwordErrorMessage,
                       prefixIcon: const Icon(Icons.lock, color: BORDER_BLUE, size: 22,),
-                      suffixIcon: Icon(passwordVisibility ? Icons.visibility_off : Icons.visibility, color: BORDER_BLUE, size: 18).onTap(() {
+                      suffixIcon: Icon(passwordVisibility ? Icons.visibility : Icons.visibility_off, color: BORDER_BLUE, size: 18).onTap(() {
                         setState(() {
                           passwordVisibility = !passwordVisibility;
                         });
@@ -220,15 +264,16 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                 AnimatedContainer(
                   curve: Curves.easeInOut,
                   duration: const Duration(milliseconds: ANIMATION_DURATION),
-                  height: _registerState ? 72 : 0,
+                  height: _registerState && confirmPasswordErrorMessage != null ? 72 + X_LARGE_V_GAP : _registerState ? 72 : 0,
                   child: !_registerState ? const SizedBox() : Container(
+                    height: 80,
                     margin: const EdgeInsets.only(top: LARGE_V_GAP, bottom: SMALL_V_GAP),
                     child: TextField(
                       controller: _confirmPasswordController,
                       maxLines: 1,
                       minLines: 1,
                       keyboardType: TextInputType.visiblePassword,
-                      obscureText: confirmPasswordVisibility2,
+                      obscureText: !confirmPasswordVisibility2,
                       onChanged: (value) {
                         setState(() {
 
@@ -257,7 +302,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                         labelStyle: GoogleFonts.poppins().copyWith(color: BORDER_BLUE),
                         errorText: confirmPasswordErrorMessage,
                         prefixIcon: const Icon(Icons.lock, color: BORDER_BLUE, size: 22,),
-                        suffixIcon: Icon(confirmPasswordVisibility2 ? Icons.visibility_off : Icons.visibility, color: BORDER_BLUE, size: 18).onTap(() {
+                        suffixIcon: Icon(confirmPasswordVisibility2 ? Icons.visibility : Icons.visibility_off, color: BORDER_BLUE, size: 18).onTap(() {
                           setState(() {
                             confirmPasswordVisibility2 = !confirmPasswordVisibility2;
                           });
@@ -281,9 +326,9 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                   ),),
                 ).onTap(() {
                   if (_registerState) {
-                    registerViaEmail();
+                    registerViaEmail(context);
                   } else {
-                    loginViaEmail();
+                    loginViaEmail(context);
                   }
                 }),
 

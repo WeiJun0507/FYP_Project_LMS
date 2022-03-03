@@ -27,7 +27,3 @@ class StarterPage extends StatelessWidget {
     );
   }
 }
-
-//hello john here
-//hello john testing 3
-//hello john testing 4

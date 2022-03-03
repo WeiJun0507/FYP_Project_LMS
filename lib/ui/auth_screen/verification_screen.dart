@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:fyp_lms/controller/auth/auth_services.dart';
 import 'dart:async';
 
 import 'package:fyp_lms/utils/constant.dart';
@@ -14,6 +15,9 @@ class VerificationScreen extends StatefulWidget {
 
 class _VerificationScreenState extends State<VerificationScreen> {
 
+  final AuthService _auth = AuthService();
+  User? userCredential;
+
   bool isEmailVerified = false;
   bool canResendEmail = false;
   Timer? timer;
@@ -21,15 +25,30 @@ class _VerificationScreenState extends State<VerificationScreen> {
   @override
   void initState(){
     super.initState();
-    isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
-    if(!isEmailVerified){
-      sendVerificationEmail();
+    checkIsUserLogin();
+  }
 
-      timer = Timer.periodic(Duration(seconds: 3), (_) => checkEmailVerified(),);
-    }
+  checkIsUserLogin() async {
+    FirebaseAuth.instance.authStateChanges().listen((User? user) {
+      setState(() {
+        userCredential = user;
+        canResendEmail = true;
+      });
+
+      if (userCredential != null) {
+        isEmailVerified = FirebaseAuth.instance.currentUser!.emailVerified;
+
+        if(!isEmailVerified){
+          sendVerificationEmail();
+          timer = Timer.periodic(Duration(seconds: 3), (_) => checkEmailVerified(),);
+        }
+      }
+
+    });
   }
 
   Future sendVerificationEmail() async{
+    print(canResendEmail);
     if(canResendEmail == true){
       try{
         final user = FirebaseAuth.instance.currentUser!;
@@ -55,6 +74,14 @@ class _VerificationScreenState extends State<VerificationScreen> {
       timer?.cancel();
       Navigator.of(context).pushReplacementNamed('/CreateAccountScreen');
     }
+  }
+
+
+  @override
+  void dispose() {
+    _auth.signOut();
+    timer?.cancel();
+    super.dispose();
   }
 
   @override
@@ -89,7 +116,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 'Cancel',
                 style: TextStyle(fontSize: 24),
               ),
-              onPressed: () => FirebaseAuth.instance.signOut(),
+              onPressed: () => Navigator.of(context).pop(),
             ),
 
             canResendEmail ? const SizedBox() : const Center(

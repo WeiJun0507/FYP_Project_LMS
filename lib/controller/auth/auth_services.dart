@@ -6,35 +6,42 @@ class AuthService{
   Future signInWithEmailAndPassword(String email, String password)async{
     try{
       await _auth.signInWithEmailAndPassword(email: email, password: password);
-      final user = _auth.currentUser;
-      print("login success");
-      print("this is $user");
-      return user;
-    }catch(e){
-      print(e);
-      return null;
-
+      if (_auth.currentUser != null) {
+        print("login success");
+        if (!_auth.currentUser!.emailVerified) {
+          return 1;
+        } else {
+          return 2;
+        }
+      }
+    }on FirebaseAuthException catch(e){
+      rethrow;
+    } catch (e) {
+      rethrow;
     }
   }
 
-  Future registerWithEmailAndPassword(String email, String password)async{
+  Future<bool> registerWithEmailAndPassword(String email, String password)async{
     try{
       await _auth.createUserWithEmailAndPassword(email: email, password: password);
+      return true;
+    } on FirebaseAuthException catch (e){
+      if (e.code == 'email-already-in-use') {
+        rethrow;
+      } else {
+        return false;
+      }
+    }
+  }
+
+  Future signOut() async{
+    try{
+      return await _auth.signOut();
     }catch(e){
       print(e.toString());
       return null;
-
     }
   }
-
-  // Future signout() async{
-  //   try{
-  //     return await _auth.signOut();
-  //   }catch(e){
-  //     print(e.toString());
-  //     return null;
-  //   }
-  // }
 
 // void changePassword(String password) {
 //   User user = _auth.currentUser;

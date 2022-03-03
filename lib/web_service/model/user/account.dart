@@ -1,10 +1,10 @@
 import 'package:json_annotation/json_annotation.dart';
 
-part 'user.g.dart';
+part 'account.g.dart';
 
 @JsonSerializable()
-class User {
-  int? id;
+class Account {
+  String? id;
 
   /*  1 - student; 2 - lecturer  */
   int? accountType;
@@ -14,6 +14,12 @@ class User {
 
   /*  Account Display Name  */
   String? displayName;
+
+  /*  Account Phone Number  */
+  String? phoneNumber;
+
+  /*  Account Gender  */
+  String? gender;
 
   /*  Academic Enrolled  */
   String? academicEnrolled;
@@ -30,9 +36,9 @@ class User {
   /*  Course Assigned for Account Type 2  */
   List<String>? courseAssigned;
 
-  User();
+  Account();
 
-  factory User.fromJson(Map<String, dynamic> json) => _$UserFromJson(json);
-  Map<String, dynamic> toJson() => _$UserToJson(this);
+  factory Account.fromJson(Map<String, dynamic> json) => _$AccountFromJson(json);
+  Map<String, dynamic> toJson() => _$AccountToJson(this);
 
 }

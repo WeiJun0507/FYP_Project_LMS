@@ -11,32 +11,32 @@ class SplashScreen extends StatefulWidget {
 }
 
 class _SplashScreenState extends State<SplashScreen> {
-  SharedPreferences? sPrefs;
 
 
   @override
   void initState() {
     super.initState();
 
-    SharedPreferences.getInstance().then((value) {
-      sPrefs = value;
-      initializeApp();
-    });
+    initializeApp();
 
   }
 
-  initializeApp() {
-    bool? isLoggedIn;
-    if (sPrefs != null) isLoggedIn = sPrefs!.getBool('isLoggedIn');
+  initializeApp() async {
+    SharedPreferences _sPrefs = await SharedPreferences.getInstance();
+    bool? isLoggedIn = _sPrefs.getBool('isLoggedIn');
+
     if (isLoggedIn != null && isLoggedIn) {
+      Future.delayed(const Duration(milliseconds: 300));
       Navigator.of(context).pushReplacementNamed('/');
     }
 
-    if (isLoggedIn == null || ( !isLoggedIn)) {
+    if (isLoggedIn == null || (!isLoggedIn)) {
+      Future.delayed(const Duration(milliseconds: 300));
       Navigator.of(context).pushReplacementNamed('/Login');
     }
-    Future.delayed(const Duration(milliseconds: 300));
+
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -45,11 +45,5 @@ class _SplashScreenState extends State<SplashScreen> {
         child: Text('Welcome'),
       ),
     );
-  }
-
-  @override
-  void dispose() {
-    sPrefs!.clear();
-    super.dispose();
   }
 }
