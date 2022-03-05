@@ -1,4 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_lms/ui/home/course_listing_screen.dart';
+import 'package:fyp_lms/ui/home/dashboard_screen.dart';
+import 'package:fyp_lms/ui/home/profile_screen.dart';
+import 'package:fyp_lms/ui/home/uploaded_file_screen.dart';
 import 'package:fyp_lms/utils/constant.dart';
 
 class HomeScreen extends StatefulWidget {
@@ -25,6 +29,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     _tabController!.addListener(() {
       switch(_tabController!.index) {
+        //INITIALIZE DASHBOARD SCREEN, POST API FETCHING
         case 0:
           break;
         case 1:
@@ -158,15 +163,16 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                 controller: _tabController,
                 children: [
                   //DASHBOARD
-                  Container(),
+                  DashboardScreen(),
 
                   //COURSE
-                  Container(),
+                  CourseListingScreen(),
 
                   //UPLOADED PAGE
-                  Container(),
-                  //PAGE
-                  Container(),
+                  UploadedFileScreen(),
+
+                  //PROFILE
+                  ProfileScreen(),
                 ],
               )
             ],
