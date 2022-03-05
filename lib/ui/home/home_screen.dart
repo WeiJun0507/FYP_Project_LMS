@@ -56,6 +56,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: DefaultTabController(
         length: 4,
         child: Scaffold(
+          backgroundColor: pageBackground,
           bottomNavigationBar: Builder(
             builder: (context) {
               return BottomNavigationBar(

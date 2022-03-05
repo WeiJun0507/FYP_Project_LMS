@@ -5,6 +5,10 @@ const int ANIMATION_DURATION = 400;
 
 
 //THEME COLOR
+
+//PAGE BACKGROUND
+const pageBackground = Color(0xFFF1F1F1);
+
 //BACKGROUND GRADIENT
 const BG_COLOR_1 = Color(0xFFFFFFFF);
 const BG_COLOR_2 = Color(0xFF38A4D5);
@@ -31,8 +35,7 @@ const LARGE_V_GAP = 12.0;
 const X_LARGE_V_GAP = 20.0;
 
 //Text Size
-const BIG_TITLE = 32.0;
-const TITLE = 24.0;
-const NORMAL_TEXT = 14.0;
+const BIG_TITLE = 20.0;
+const TITLE = 16.0;
 const SUB_TITLE = 12.0;
 const HINT_TEXT = 10.0;
