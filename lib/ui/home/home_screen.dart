@@ -56,10 +56,11 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
       child: DefaultTabController(
         length: 4,
         child: Scaffold(
-          backgroundColor: pageBackground,
           bottomNavigationBar: Builder(
             builder: (context) {
               return BottomNavigationBar(
+                elevation: 0,
+                showUnselectedLabels: false,
                 backgroundColor: Colors.white,
                 type: BottomNavigationBarType.fixed,
                 items: <BottomNavigationBarItem>[
@@ -70,7 +71,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: COLOR_INVALID,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     activeIcon: Column(
@@ -79,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: BG_COLOR_4,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     label: 'Dashboard',
@@ -91,7 +92,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: COLOR_INVALID,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     activeIcon: Column(
@@ -100,7 +101,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: BG_COLOR_4,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     label: 'Course',
@@ -112,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: COLOR_INVALID,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     activeIcon: Column(
@@ -121,7 +122,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: BG_COLOR_4,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     label: 'Uploaded File',
@@ -133,7 +134,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: COLOR_INVALID,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     activeIcon: Column(
@@ -142,7 +143,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                           Icons.home,
                           color: BG_COLOR_4,
                         ),
-                        SizedBox(height: SMALL_V_GAP),
+                        SizedBox(height: small_padding),
                       ],
                     ),
                     label: 'Profile',

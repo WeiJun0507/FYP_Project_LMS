@@ -33,6 +33,9 @@ class Course {
   /*  Course Color  */
   String? color;
 
+  /*  Course Image  */
+  String? courseImage;
+
   /*  HIDE COURSE  */
   String? isHide;
 

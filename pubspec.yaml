@@ -50,6 +50,12 @@ dependencies:
   #CAROUSEL SLIDER
   carousel_slider: ^4.0.0
 
+  #CACHED NETWORK IMAGE
+  cached_network_image: ^3.2.0
+
+  #SVG DISPLAY
+  flutter_svg: ^1.0.3
+
   #OTHER/ UTILS
   intl: ^0.17.0
   nb_utils: ^4.4.12
@@ -92,6 +98,7 @@ flutter:
   # To add assets to your application, add an assets section, like this:
   assets:
     - assets/
+    - assets/document
 
   # An image asset can refer to one or more resolution-specific "variants", see
   # https://flutter.dev/assets-and-images/#resolution-aware.

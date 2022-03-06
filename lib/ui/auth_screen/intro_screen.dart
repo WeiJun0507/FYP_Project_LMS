@@ -163,11 +163,11 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                     height: 270
                   ),
                 ),
-                const SizedBox(height: LARGE_V_GAP,),
+                const SizedBox(height: large_padding,),
                 // USERNAME
                 Container(
                   height: usernameErrorMessage != null ? 80 : 56,
-                  margin: const EdgeInsets.only(top: LARGE_V_GAP, bottom: SMALL_V_GAP),
+                  margin: const EdgeInsets.only(top: large_padding, bottom: small_padding),
                   child: TextField(
                     controller: _usernameController,
                     maxLines: 1,
@@ -210,12 +210,12 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                     ),
                   ),
                 ),
-                const SizedBox(height: V_GAP),
+                const SizedBox(height: normal_padding),
 
                 // PASSWORD
                 Container(
                   height: passwordErrorMessage != null ? 80 : 56,
-                  margin: const EdgeInsets.only(top: LARGE_V_GAP, bottom: SMALL_V_GAP),
+                  margin: const EdgeInsets.only(top: large_padding, bottom: small_padding),
                   child: TextField(
                     controller: _passwordController,
                     maxLines: 1,
@@ -258,16 +258,16 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                     ),
                   ),
                 ),
-                const SizedBox(height: V_GAP),
+                const SizedBox(height: normal_padding),
 
                 // CONFIRM PASSWORD
                 AnimatedContainer(
                   curve: Curves.easeInOut,
                   duration: const Duration(milliseconds: ANIMATION_DURATION),
-                  height: _registerState && confirmPasswordErrorMessage != null ? 72 + X_LARGE_V_GAP : _registerState ? 72 : 0,
+                  height: _registerState && confirmPasswordErrorMessage != null ? 72 + x_large_padding : _registerState ? 72 : 0,
                   child: !_registerState ? const SizedBox() : Container(
                     height: 80,
-                    margin: const EdgeInsets.only(top: LARGE_V_GAP, bottom: SMALL_V_GAP),
+                    margin: const EdgeInsets.only(top: large_padding, bottom: small_padding),
                     child: TextField(
                       controller: _confirmPasswordController,
                       maxLines: 1,
@@ -311,11 +311,11 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                     ),
                   ),
                 ),
-                const SizedBox(height: X_LARGE_V_GAP),
+                const SizedBox(height: x_large_padding),
 
                 //LOGIN BUTTON
                 Container(
-                  padding: const EdgeInsets.only(left: X_LARGE_H_GAP, right: X_LARGE_H_GAP, top: V_GAP, bottom: V_GAP),
+                  padding: const EdgeInsets.only(left: x_large_padding, right: x_large_padding, top: normal_padding, bottom: normal_padding),
                   decoration: const BoxDecoration(
                     color: BG_COLOR_4,
                     borderRadius: BorderRadius.all(Radius.circular(10)),
@@ -332,7 +332,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
                   }
                 }),
 
-                const SizedBox(height: X_LARGE_V_GAP,),
+                const SizedBox(height: x_large_padding,),
                 AnimatedContainer(
                   curve: Curves.easeInOut,
                   constraints: _registerState

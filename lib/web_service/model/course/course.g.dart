@@ -18,6 +18,7 @@ Course _$CourseFromJson(Map<String, dynamic> json) => Course()
   ..assignedTo = json['assignedTo'] as String?
   ..studentEnrolled = json['studentEnrolled'] as int?
   ..color = json['color'] as String?
+  ..courseImage = json['courseImage'] as String?
   ..isHide = json['isHide'] as String?;
 
 Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
@@ -31,5 +32,6 @@ Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
       'assignedTo': instance.assignedTo,
       'studentEnrolled': instance.studentEnrolled,
       'color': instance.color,
+      'courseImage': instance.courseImage,
       'isHide': instance.isHide,
     };

@@ -98,7 +98,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
           child: Center(
             child: Container(
               margin: const EdgeInsets.only(left: 32.0, right: 32.0),
-              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: LARGE_V_GAP),
+              padding: const EdgeInsets.only(left: 8.0, right: 8.0, top: large_padding),
               height: MediaQuery.of(context).size.height * 0.75,
               decoration: BoxDecoration(
                 color: Colors.white,
@@ -257,7 +257,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                     ),
                     child: numberTwoInputField(context, _yearController, _semesterController, (){}, 'ACADEMIC YEAR', inputLabel1: 'Year', inputLabel2: 'Semester', fieldIcon: Icons.book),
                   ),
-                  const SizedBox(height: X_LARGE_V_GAP),
+                  const SizedBox(height: x_large_padding),
 
                   Center(
                     child: Container(
