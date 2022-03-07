@@ -1,3 +1,11 @@
 class CourseListingController {
-  bool courseListingIsExpanded = true;
+  bool courseListingIsExpanded = true, previousCourseListingIsExpanded = true, editMode = false;
+
+  fetchCurrentCourse() async {
+
+  }
+
+  fetchPreviousCourse() async {
+
+  }
 }

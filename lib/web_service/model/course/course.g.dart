@@ -9,6 +9,7 @@ part of 'course.dart';
 Course _$CourseFromJson(Map<String, dynamic> json) => Course()
   ..id = json['id'] as int?
   ..courseName = json['courseName'] as String?
+  ..courseOverview = json['courseOverview'] as String?
   ..courseHour =
       (json['courseHour'] as List<dynamic>?)?.map((e) => e as String).toList()
   ..courseDescription = json['courseDescription'] as String?
@@ -24,6 +25,7 @@ Course _$CourseFromJson(Map<String, dynamic> json) => Course()
 Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
       'id': instance.id,
       'courseName': instance.courseName,
+      'courseOverview': instance.courseOverview,
       'courseHour': instance.courseHour,
       'courseDescription': instance.courseDescription,
       'courseAnnouncement': instance.courseAnnouncement,

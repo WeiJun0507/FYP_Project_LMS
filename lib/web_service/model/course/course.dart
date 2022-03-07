@@ -9,6 +9,9 @@ class Course {
   /*  Course Name  */
   String? courseName;
 
+  /*  Course Overview  */
+  String? courseOverview;
+
   /*  Course Duration  */
   List<String>? courseHour;
 
@@ -38,6 +41,7 @@ class Course {
 
   /*  HIDE COURSE  */
   String? isHide;
+
 
 
   Course();

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/custom_field/custom/custom_expansion_panel.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:nb_utils/nb_utils.dart';
 
 import '../../controller/dashboard/course_listing_controller.dart';
 
@@ -15,9 +16,17 @@ class CourseListingScreen extends StatefulWidget {
 class _CourseListingScreenState extends State<CourseListingScreen> {
   CourseListingController controller = CourseListingController();
 
+
+  @override
+  void initState() {
+    super.initState();
+    controller.fetchCurrentCourse();
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: getColorFromHex('F5F5F5'),
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         toolbarHeight: 0,
@@ -35,16 +44,21 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                   fontWeight: FontWeight.bold,
                 ),),
                 const SizedBox(width: small_padding,),
-                const Icon(Icons.edit, color: BG_COLOR_4, size: 22.0,),
+                const Icon(Icons.edit, color: BG_COLOR_4, size: 22.0,).onTap(() {
+                  setState(() {
+                    controller.editMode = !controller.editMode;
+                  });
+                }),
               ],
             ),
           ),
 
           //CURRENT COURSE
           Container(
-            margin: EdgeInsets.only(left: 16, right: 16, top: 12),
+            margin: const EdgeInsets.only(left: normal_padding, right: normal_padding, top: 12),
             child: CustomExpansionPanelList(
-              expandedHeaderPadding: EdgeInsets.symmetric(vertical: 2),
+              elevation: 1,
+              expandedHeaderPadding: EdgeInsets.symmetric(vertical: 3, horizontal: 2),
               animationDuration: Duration(milliseconds: 700),
               children: [
                 CustomExpansionPanel(
@@ -67,8 +81,48 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                       ),
                     );
                   },
-                  body: Container(
-
+                  body: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: 5,
+                    itemBuilder: (BuildContext context, int index) {
+                      return controller.editMode ? Row(
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.all(normal_padding),
+                            child: Icon(Icons.delete, color: Colors.red, size: 18.0,),
+                          ).onTap(() {
+                            //REMOVE COURSE
+                          }),
+                          Expanded(
+                            child: Container(
+                              margin: const EdgeInsets.only(left: large_padding, right: large_padding, bottom: normal_padding),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[100],
+                                borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                border: Border.all(color: Colors.grey, width: 0.5),
+                              ),
+                              child: ListTile(
+                                leading: Text('${index + 1})'),
+                                title: Text('Course $index CC10$index'),
+                                trailing: Icon(Icons.zoom_out_map, size: 18.0),
+                              ),
+                            ),
+                          )
+                        ],
+                      ) : Container(
+                        margin: const EdgeInsets.only(left: large_padding, right: large_padding, bottom: normal_padding),
+                        decoration: BoxDecoration(
+                          color: Colors.grey[100],
+                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          border: Border.all(color: Colors.grey, width: 0.5),
+                        ),
+                        child: ListTile(
+                          leading: Text('${index + 1})'),
+                          title: Text('Course $index CC10$index'),
+                          trailing: Icon(Icons.zoom_out_map, size: 18.0),
+                        ),
+                      );
+                    },
                   ),
                   isExpanded: controller.courseListingIsExpanded,
                   canTapOnHeader: true
@@ -84,7 +138,7 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
 
           //SEPARATE INDICATOR
           Container(
-            margin: EdgeInsets.only(top: large_padding, bottom: small_padding, left: MediaQuery.of(context).size.width * 0.15),
+            margin: EdgeInsets.only(top: large_padding, bottom: large_padding, left: MediaQuery.of(context).size.width * 0.15),
             width: MediaQuery.of(context).size.width * 0.7,
             alignment: Alignment.center,
             child: Row(
@@ -159,13 +213,13 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                     body: Container(
 
                     ),
-                    isExpanded: controller.courseListingIsExpanded,
+                    isExpanded: controller.previousCourseListingIsExpanded,
                     canTapOnHeader: true
                 ),
               ],
               expansionCallback: (int panelIndex, bool isExpanded) {
                 setState(() {
-                  controller.courseListingIsExpanded = !controller.courseListingIsExpanded;
+                  controller.previousCourseListingIsExpanded = !controller.previousCourseListingIsExpanded;
                 });
               },
             ),
