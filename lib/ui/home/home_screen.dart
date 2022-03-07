@@ -45,12 +45,14 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   }
 
   _changeTab(int index) {
-
+    setState(() {
+      _tabController!.index = index;
+      _currentPage = index;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
-    //DO BOTTOM NAVIGATOR
     return MediaQuery(
       data: MediaQuery.of(context).copyWith(textScaleFactor: 1.0),
       child: DefaultTabController(

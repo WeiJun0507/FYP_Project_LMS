@@ -26,7 +26,7 @@ const large_padding = 12.0;
 const x_large_padding = 20.0;
 
 //Text Size
-const BIG_TITLE = 26.0;
+const BIG_TITLE = 24.0;
 const TITLE = 16.0;
 const SUB_TITLE = 12.0;
 const HINT_TEXT = 10.0;
