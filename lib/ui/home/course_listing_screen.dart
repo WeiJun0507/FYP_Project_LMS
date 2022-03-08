@@ -228,7 +228,10 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
       ),
       floatingActionButton: FloatingActionButton.small(
         onPressed: () {
-
+          //HANDLE FOR DIFFERENT ACCOUNT TYPE
+          // 1 - STUDENT
+          // 2 - LECTURER
+          Navigator.of(context).pushNamed('/AddCourseScreen');
         },
         child: Icon(Icons.add),
       ),

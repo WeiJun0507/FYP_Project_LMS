@@ -23,4 +23,11 @@ class DropdownController {
         .toList();
   }
 
+  dispose() {
+    mainList.clear();
+    displayList.clear();
+    hasInit = false;
+    searchController.clear();
+  }
+
 }

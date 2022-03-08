@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Widget textareaInputField(TextEditingController controller, VoidCallback onChanges) {
+Widget textareaInputField(TextEditingController controller, VoidCallback onChanges, String label) {
 
   return Column(
     children: [
@@ -21,8 +21,7 @@ Widget textareaInputField(TextEditingController controller, VoidCallback onChang
               //CHECK IF REQUIRED
                 child: RichText(
                     text: TextSpan(
-                      //TODO: CHANGE TO DYNAMIC LABEL
-                     text: 'INPUT TEXT LABEL',
+                     text: label,
                      style: GoogleFonts.poppins().copyWith(
                        fontWeight: FontWeight.w500,
                        fontSize: 12,
