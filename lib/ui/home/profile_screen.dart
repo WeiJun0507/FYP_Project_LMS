@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_lms/ui/home/custom_profile_clipper.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:fyp_lms/controller/auth/auth_services.dart';
@@ -13,8 +14,8 @@ State<ProfileScreen> createState() => _ProfileScreenState();
 }
 final AuthService _auth = AuthService();
 
-Widget buildCoverImage() => Container(
-  color: Colors.grey,
+Widget buildCoverImage() => ClipPath(
+  clipper: CustomProfileClipper(),
   child: Container(
     width: double.infinity,
     height: 280,
@@ -82,7 +83,7 @@ Widget buildButtons(context){
       ]
     ),
     child:Row(
-      children: [
+      children: const [
         Icon(
             Icons.directions_run_outlined,
             color: BG_COLOR_2
@@ -96,9 +97,11 @@ Widget buildButtons(context){
         Icon(Icons.chevron_right_outlined),
       ],
     ),
-  ).onTap((){
+  ).onTap(() async {
+    SharedPreferences _sPref = await SharedPreferences.getInstance();
+    _sPref.clear();
     _auth.signOut();
-    Navigator.of(context).pushNamed('/Login');
+    Navigator.of(context).pushReplacementNamed('/Login');
 
   });
 }

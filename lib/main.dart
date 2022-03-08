@@ -24,6 +24,7 @@ class StarterPage extends StatelessWidget {
       //use sharedPreferences to identify
       initialRoute: '/SplashScreen',
       routes: routesName,
+
     );
   }
 }

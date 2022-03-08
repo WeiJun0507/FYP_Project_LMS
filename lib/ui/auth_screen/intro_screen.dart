@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -79,6 +81,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
               _sPref.setString('username', createdUser.displayName!);
               _sPref.setInt('accountType', 1);
               _sPref.setBool('verified', firebaseAuth.currentUser!.emailVerified);
+              _sPref.setString('accountInfo', jsonEncode(createdUser));
 
               Navigator.of(context).pushReplacementNamed('/');
             }
@@ -88,7 +91,9 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
             break;
         }
       },onError: (e) {
-        showInfoDialog(context, null, e.toString());
+        showInfoDialog(context, null, e.toString(), callback: () {
+          Navigator.of(context).pop();
+        });
       });
     }
   }
@@ -108,7 +113,9 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
       if (response) {
         Navigator.of(context).pushNamed('/VerificationScreen');
       } else {
-        showInfoDialog(context, null, 'Something went wrong. Please try again.');
+        showInfoDialog(context, null, 'Something went wrong. Please try again.', callback: () {
+          Navigator.of(context).pop();
+        });
       }
     }, onError: (e) {
       if (e is FirebaseAuthException) {
@@ -117,7 +124,9 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
         });
         return;
       } else {
-        showInfoDialog(context, null, 'Something went wrong. Please try again.');
+        showInfoDialog(context, null, 'Something went wrong. Please try again.', callback: () {
+          Navigator.of(context).pop();
+        });
       }
     });
 

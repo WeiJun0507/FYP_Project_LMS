@@ -4,7 +4,7 @@ part 'course.g.dart';
 
 @JsonSerializable()
 class Course {
-  int? id;
+  String? id;
 
   /*  Course Name  */
   String? courseName;
