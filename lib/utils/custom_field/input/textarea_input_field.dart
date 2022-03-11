@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-Widget textareaInputField(TextEditingController controller, VoidCallback onChanges, String label) {
+Widget textareaInputField(TextEditingController controller, VoidCallback onChanges, String label, {IconData? fieldIcon}) {
 
   return Column(
     children: [
@@ -11,8 +11,8 @@ Widget textareaInputField(TextEditingController controller, VoidCallback onChang
         padding: const EdgeInsets.only(top: 12, left: 14, bottom: 10, right: 14),
         child: Row(
           children: [
-            const Icon(
-              Icons.text_fields,
+            Icon(
+              fieldIcon ?? Icons.text_fields,
               color: Colors.grey,
               size: 18,
             ),

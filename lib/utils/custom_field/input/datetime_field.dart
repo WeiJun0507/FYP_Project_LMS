@@ -4,7 +4,7 @@ import 'package:nb_utils/nb_utils.dart';
 
 import '../../date_util.dart';
 
-Widget datetimeField(BuildContext context, TextEditingController controller, String? datetimeValue, VoidCallback onChanges, String label){
+Widget datetimeField(BuildContext context, TextEditingController controller, String? datetimeValue, ValueChanged<String> onChanges, String label){
 
   DateTime mDate = DateTime.now();
 
@@ -113,7 +113,7 @@ Widget datetimeField(BuildContext context, TextEditingController controller, Str
                         ).onTap(() {
                           datetimeValue = '';
                           controller.text = '';
-                          onChanges();
+                          onChanges('');
                         }),
                         Container(
                           padding: EdgeInsets.only(right: 12),
@@ -142,7 +142,7 @@ Widget datetimeField(BuildContext context, TextEditingController controller, Str
                               DateTime newDateTime = DateTime(newDate.year,newDate.month,newDate.day,newTime.hour,newTime.minute);
                               datetimeValue = DateUtil().getDatetimeFormatServer().format(newDateTime);
                               controller.text = DateUtil().getDatetimeFormatDisplay().format(newDateTime);
-                              onChanges();
+                              onChanges(datetimeValue!);
                             }
 
                           }
@@ -179,8 +179,9 @@ Widget datetimeField(BuildContext context, TextEditingController controller, Str
 
                     if (newTime != null) {
                       DateTime newDateTime = DateTime(newDate.year,newDate.month,newDate.day,newTime.hour,newTime.minute);
+                      datetimeValue = DateUtil().getDatetimeFormatServer().format(newDateTime);
                       controller.text = DateUtil().getDatetimeFormatServer().format(newDateTime);
-                      onChanges();
+                      onChanges(datetimeValue!);
                     }
 
                   }

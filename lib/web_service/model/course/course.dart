@@ -6,6 +6,9 @@ part 'course.g.dart';
 class Course {
   String? id;
 
+  /*  Course Code  */
+  String? courseCode;
+
   /*  Course Name  */
   String? courseName;
 
@@ -24,14 +27,23 @@ class Course {
   /*  Course Midterm  */
   String? courseMidtermDate;
 
+  /*  Course Midterm  */
+  String? courseAssignmentDate;
+
   /*  Course Final  */
   String? courseFinal;
 
   /*  Assigned To (Lecture Code)  */
   String? assignedTo;
 
+  /*  Assigned To (Lecture Name)  */
+  String? assignedToName;
+
   /*  Number of Student Enrolled  */
-  int? studentEnrolled;
+  String? studentEnrolled;
+
+  /*  Course Venue  */
+  String? venue;
 
   /*  Course Color  */
   String? color;
@@ -40,7 +52,7 @@ class Course {
   String? courseImage;
 
   /*  HIDE COURSE  */
-  String? isHide;
+  bool? isHide;
 
 
 

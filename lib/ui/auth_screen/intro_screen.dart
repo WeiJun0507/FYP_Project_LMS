@@ -79,7 +79,7 @@ class _IntroScreenState extends State<IntroScreen> with SingleTickerProviderStat
               _sPref.setBool('isLoggedIn', true);
               _sPref.setString('account', createdUser.id.toString());
               _sPref.setString('username', createdUser.displayName!);
-              _sPref.setInt('accountType', 1);
+              _sPref.setInt('accountType', createdUser.accountType!);
               _sPref.setBool('verified', firebaseAuth.currentUser!.emailVerified);
               _sPref.setString('accountInfo', jsonEncode(createdUser));
 
