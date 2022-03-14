@@ -56,6 +56,9 @@ dependencies:
   #SVG DISPLAY
   flutter_svg: ^1.0.3
 
+  #FILE PICKER
+  file_picker: ^4.5.1
+
   #OTHER/ UTILS
   intl: ^0.17.0
   nb_utils: ^4.4.12

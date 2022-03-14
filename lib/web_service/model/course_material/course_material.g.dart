@@ -8,7 +8,7 @@ part of 'course_material.dart';
 
 CourseMaterial _$CourseMaterialFromJson(Map<String, dynamic> json) =>
     CourseMaterial()
-      ..id = json['id'] as int?
+      ..id = json['id'] as String?
       ..materialName = json['materialName'] as String?
       ..materialPath = json['materialPath'] as String?
       ..materialType = json['materialType'] as String?

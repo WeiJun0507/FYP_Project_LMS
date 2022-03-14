@@ -1,5 +1,7 @@
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_lms/controller/course/course_detail_controller.dart';
+import 'package:fyp_lms/web_service/model/course_material/course_material.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 
@@ -27,6 +29,54 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
               Icons.drag_handle,
               color: Colors.grey,
             ),
+            Container(
+              padding: EdgeInsets.only(top: 13, bottom: 10, left: 10),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.check,
+                    color: Colors.greenAccent,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text('Add Course Material',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600
+                              ))
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text('Upload Course Material',
+                              style: TextStyle(
+                                  fontSize: 11,
+                                  color: Colors.grey
+                              ))
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ).onTap(() async {
+              FilePickerResult? pickResult = await FilePicker.platform.pickFiles(
+                  type: FileType.any,
+                  allowMultiple: false,
+              );
+
+              if (pickResult != null) {
+                Navigator.of(context).pop();
+                controller.uploadFile(context, pickResult.files[0]);
+              }
+            }),
+            Divider(
+              height: 1,
+              indent: 10,
+              endIndent: 10,
+            ),
+
             Container(
               padding: EdgeInsets.only(top: 13, bottom: 10, left: 10),
               child: Row(

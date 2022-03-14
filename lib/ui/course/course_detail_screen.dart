@@ -26,11 +26,9 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      controller.isLoading = true;
-    });
     SharedPreferences.getInstance().then((value) {
       setState(() {
+        controller.isLoading = true;
         _sPref = value;
         initializeData();
       });
@@ -49,6 +47,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
       final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
       if (arguments['course'] != null) {
         setState(() {
+          controller.isLoading = false;
           controller.course = arguments['course'];
         });
       }
@@ -103,6 +102,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 if (value != null && value is int) {
                                   switch(value) {
                                     case 1:
+                                      //BROWSE COURSE MATERIAL
                                       break;
                                     case 2:
                                       //EDIT COURSE
