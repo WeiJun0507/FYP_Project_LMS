@@ -1,12 +1,17 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/dashboard/dashboard_controller.dart';
 import 'package:fyp_lms/ui/dashboard/upcoming_event_widget.dart';
 import 'package:fyp_lms/ui/dashboard/post_item.dart';
+
+import '../../web_service/model/user/account.dart';
 
 class DashboardScreen extends StatefulWidget {
   const DashboardScreen({Key? key}) : super(key: key);
@@ -17,6 +22,7 @@ class DashboardScreen extends StatefulWidget {
 
 class _DashboardScreenState extends State<DashboardScreen> {
   DashboardController controller = DashboardController();
+  SharedPreferences? _sPref;
 
   final ScrollController scrollController = ScrollController();
 
@@ -24,10 +30,21 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   void initState() {
     super.initState();
-    //Todo: fetch course
+    SharedPreferences.getInstance().then((value) {
+      setState(() {
+        _sPref = value;
+        initializeData();
+      });
+    });
+  }
 
-    //Todo: fetch post
+  initializeData() {
+    controller.accountId = _sPref!.getString('account');
+    controller.accountName = _sPref!.getString('username');
+    controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
+    controller.accountType = _sPref!.getInt('accountType');
 
+    controller.initRefresh(setState);
   }
 
   @override
@@ -39,7 +56,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       ),
       body: RefreshIndicator(
         displacement: 60,
-        onRefresh: () => controller.initRefresh(),
+        onRefresh: () => controller.initRefresh(setState),
         child: CustomScrollView(
           controller: scrollController,
           slivers: [
@@ -71,17 +88,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             //UPCOMING COURSE
             SliverToBoxAdapter(
-              child: CarouselSlider.builder(
-                itemCount: 3,
+              child: controller.isLoading ? Center(child: CircularProgressIndicator(color: BG_COLOR_4,),) : CarouselSlider.builder(
+                itemCount: controller.upcomingCourseList.length,
                 itemBuilder: (BuildContext ctx, int index, int pageIndex) {
-                  return upcomingEventWidget(context, null);
+                  return upcomingEventWidget(context, controller, controller.upcomingCourseList[index], controller.upcomingDateList[index]);
                 },
                 options: CarouselOptions(
                   enableInfiniteScroll: false,
                   enlargeCenterPage: false,
                   disableCenter: true,
                   viewportFraction: 0.9,
-                  //scrollPhysics:
                 ),
               )
             ),

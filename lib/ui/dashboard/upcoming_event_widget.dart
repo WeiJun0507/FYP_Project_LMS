@@ -1,11 +1,13 @@
 import 'package:flutter/material.dart';
+import 'package:fyp_lms/utils/general_utils.dart';
 import 'package:fyp_lms/web_service/model/course/course.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 
 import 'package:fyp_lms/utils/constant.dart';
+import 'package:nb_utils/nb_utils.dart';
 
-Widget upcomingEventWidget(BuildContext context, course) {
+Widget upcomingEventWidget(BuildContext context, pageController, Course course, Map<String, dynamic> date) {
   return Container(
     margin: const EdgeInsets.only(left: large_padding, right: large_padding),
     decoration: BoxDecoration(
@@ -22,7 +24,21 @@ Widget upcomingEventWidget(BuildContext context, course) {
     child: Container(
       padding: const EdgeInsets.all(large_padding),
       decoration: BoxDecoration(
-        image: DecorationImage(image: AssetImage('assets/course_icon.png'), fit: BoxFit.cover, opacity: 0.3),
+        gradient: LinearGradient(
+          colors: [
+            pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)],
+            pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)].withOpacity(0.95),
+            pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)].withOpacity(0.9),
+          ],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          stops: const [
+            0.0,
+            0.8,
+            1.0,
+          ],
+        ),
+        //image: DecorationImage(image: AssetImage('assets/course_icon.png'), fit: BoxFit.cover, opacity: 0.3),
         borderRadius: BorderRadius.all(Radius.circular(10.0)),
       ),
       child: Row(
@@ -35,71 +51,67 @@ Widget upcomingEventWidget(BuildContext context, course) {
                 children: [
                   Text('Course Name: ', style: GoogleFonts.poppins().copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
                     fontSize: TITLE,
                   )),
-                  Text('Example Course Name And Longer Course Name Example Course Name And Longer Course Name', style: GoogleFonts.poppins().copyWith(
-                    fontSize: HINT_TEXT,
-                    color: Colors.black,
+                  Text(course.courseName!, style: GoogleFonts.poppins().copyWith(
+                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
                   )),
-                  const SizedBox(width: large_padding),
+                  const SizedBox(width: normal_padding),
 
                   Text('Course Code: ', style: GoogleFonts.poppins().copyWith(
                     fontWeight: FontWeight.w600,
-                    color: Colors.black,
+                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
                     fontSize: TITLE,
                   )),
-                  Text('CC101', style: GoogleFonts.poppins().copyWith(
-                    fontSize: HINT_TEXT,
-                    color: Colors.black,
+                  Text(course.courseCode!, style: GoogleFonts.poppins().copyWith(
+                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
                   )),
 
                   const SizedBox(height: x_large_padding),
 
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                     children: [
                       Expanded(
-                        child: Row(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
                           children: [
                             Text('Time: ', style: GoogleFonts.poppins().copyWith(
                               fontWeight: FontWeight.w600,
-                              color: Colors.black,
+                              fontSize: SUB_TITLE,
+                              color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
                             )),
                             const SizedBox(width: 2.0),
 
-                            Expanded(
-                              child: Text('2:00p.m. - 3.30p.m.', style: GoogleFonts.poppins().copyWith(
-                                fontSize: HINT_TEXT,
-                                color: Colors.black,
-                              ), softWrap: true,),
-                            ),
+                            Text(date['date'] + ' ' + date['duration'].substring(0,5) + '-' + date['duration'].substring(11,16), style: GoogleFonts.poppins().copyWith(
+                              fontSize: SUB_TITLE,
+                              color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                            ), softWrap: true,),
 
                           ],
                         ),
                       ),
 
-                      Expanded(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          children: [
-                            Text('Venue: ', style: GoogleFonts.poppins().copyWith(
-                              fontWeight: FontWeight.w600,
-                              color: Colors.black,
-                            )),
-                            const SizedBox(width: 2.0),
+                      Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Text('Venue: ', style: GoogleFonts.poppins().copyWith(
+                            fontWeight: FontWeight.w600,
+                            color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                          )),
+                          const SizedBox(width: 2.0),
 
-                            Expanded(
-                              child: Text('CG02 - Block C', style: GoogleFonts.poppins().copyWith(
-                                fontSize: HINT_TEXT,
-                                color: Colors.black,
-                              ), softWrap: true,),
-                            ),
+                          Text(course.venue!, style: GoogleFonts.poppins().copyWith(
+                            fontSize: SUB_TITLE,
+                            color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                          ), softWrap: true,),
 
-                          ],
-                        ),
-                      )
+                        ],
+                      ),
+                      const SizedBox(width: large_padding),
                     ],
                   ),
 
@@ -117,7 +129,11 @@ Widget upcomingEventWidget(BuildContext context, course) {
                       ),
                       ),
                     ),
-                  )
+                  ).onTap(() {
+                    Navigator.of(context).pushNamed('/CourseDetailScreen', arguments: {
+                      'course': course,
+                    });
+                  })
                 ],
               ),
             ),

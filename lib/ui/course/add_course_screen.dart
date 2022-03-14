@@ -56,6 +56,9 @@ class _AddCourseScreenState extends State<AddCourseScreen> {
     colorController.text = controller.courseColorSelection[0];
     timeStartDisplay = DateUtil().getDatetimeFormatServer().format(DateTime.now());
     timeEndDisplay = DateUtil().getDatetimeFormatServer().format(DateTime.now().add(Duration(hours: 2)));
+    controller.courseMidtermDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
+    controller.courseAssignmentDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
+    controller.courseFinalDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
   }
 
   initializeData() {

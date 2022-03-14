@@ -54,6 +54,9 @@ class Course {
   /*  HIDE COURSE  */
   bool? isHide;
 
+  /*  COURSE CREATED TIME*/
+  String? createdAt;
+
 
 
   Course();

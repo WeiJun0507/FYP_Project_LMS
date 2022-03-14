@@ -190,7 +190,8 @@ class AddCourseController {
       DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart)),
       DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd)),
     ];
-    
+
+
     Course data = Course();
     data.id = '${code}_$name';
     data.courseCode = code;
@@ -202,12 +203,13 @@ class AddCourseController {
     data.courseOverview = overview;
     data.courseAnnouncement = announcement;
     data.courseMidtermDate = courseMidtermDate;
-    data.courseAssignmentDate = courseAnnouncement;
+    data.courseAssignmentDate = courseAssignmentDate;
     data.courseFinal = courseFinalDate;
     data.color = courseColorSelection[color];
     data.studentEnrolled = studentEnrolled;
     data.venue = venue;
     data.isHide = false;
+    data.createdAt = DateUtil().getDatetimeFormatServer().format(DateTime.now());
 
     await _db.collection('Course').doc('${code}_$name').set(data.toJson()).then((value) async {
       //ADD DURATION
@@ -215,12 +217,16 @@ class AddCourseController {
         String today = DateUtil().getDateFormatServer().format(DateTime.now().add(Duration(days: i * 7)));
         _db.collection('Course').doc('${code}_$name').collection('${today}_${code}_$name')
             .doc('${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}')
-            .set({'duration': '${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}',
+            .set({
+          'duration': '${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}',
+          'date': DateUtil().getDateFormatServer().format(DateTime.parse(timeStart)),
+          'duration_datetime' : DateUtil().getDatetimeFormatServer().format(DateTime.parse(timeStart)),
+          'createdAt': DateUtil().getDatetimeFormatServer().format(DateTime.now()),
         });
       }
       //UPDATE ASSIGNED COURSE FOR LECTURER
       final DocumentSnapshot userReference = await _db.collection('account').doc(assignedTo).get();
-      List<String>? courseAssigned = Account.fromJson((userReference.data() as Map<String, dynamic>)).courseTaken;
+      List<String>? courseAssigned = Account.fromJson((userReference.data() as Map<String, dynamic>)).courseAssigned;
       await _db.collection('account').doc(assignedTo).update({
         'courseAssigned': courseAssigned != null ? [...courseAssigned, '${code}_$name'] : ['${code}_$name'],
       }).then((result) {

@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:fyp_lms/controller/course/course_detail_controller.dart';
 import 'package:fyp_lms/utils/constant.dart';
+import 'package:fyp_lms/utils/general_utils.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -79,13 +80,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     leadingWidth: 56,
                     leading: Icon(
                       Icons.arrow_back,
-                      color: Colors.white,
+                      color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                     ).onTap(() => Navigator.of(context).pop()),
                     actions: [
                       IconButton(
                         icon: Icon(
                           Icons.more_vert,
-                          color: Colors.white,
+                          color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                         ),
                         onPressed: () {
                           showModalBottomSheet(
@@ -125,11 +126,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         Text(controller.course!.courseName ?? '-', style: GoogleFonts.poppins().copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
+                          color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)])
                         ),),
                         //COURSE CODE
                         Text(controller.course!.courseCode ?? '-', style: GoogleFonts.poppins().copyWith(
                           fontSize: HINT_TEXT,
                           fontWeight: FontWeight.w500,
+                          color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                         ),),
                       ],
                     ),
@@ -146,19 +149,19 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 controller.course!.courseMidtermDate == null ? const SizedBox() : Container(
                                   padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: normal_padding, bottom: normal_padding),
                                   decoration: BoxDecoration(
-                                    color: Colors.white10,
+                                    color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
                                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                   ),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('Mid Term:',style: GoogleFonts.poppins().copyWith(
-                                        color: Colors.white,
+                                        color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                                         fontSize: SUB_TITLE,
                                         fontWeight: FontWeight.w500,
                                       ),),
                                       Text(controller.course!.courseMidtermDate!,style: GoogleFonts.poppins().copyWith(
-                                        color: Colors.white,
+                                        color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                                         fontWeight: FontWeight.w600,
                                       ),),
 
@@ -175,19 +178,19 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         child: Container(
                                           padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: normal_padding, bottom: normal_padding),
                                           decoration: BoxDecoration(
-                                            color: Colors.white10,
+                                            color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
                                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                           ),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Assignment: ',style: GoogleFonts.poppins().copyWith(
-                                                color: Colors.white,
+                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                                                 fontSize: SUB_TITLE,
                                                 fontWeight: FontWeight.w500,
                                               ),),
                                               Text(controller.course!.courseAssignmentDate!,style: GoogleFonts.poppins().copyWith(
-                                                color: Colors.white,
+                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                                                 fontWeight: FontWeight.w600,
                                               ),),
 
@@ -200,19 +203,19 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         child: Container(
                                           padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: normal_padding, bottom: normal_padding),
                                           decoration: BoxDecoration(
-                                            color: Colors.white10,
+                                            color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
                                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                           ),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Final Exam:',style: GoogleFonts.poppins().copyWith(
-                                                color: Colors.white,
+                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                                                 fontSize: SUB_TITLE,
                                                 fontWeight: FontWeight.w500,
                                               ),),
                                               Text(controller.course!.courseFinal!,style: GoogleFonts.poppins().copyWith(
-                                                color: Colors.white,
+                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
                                                 fontWeight: FontWeight.w600,
                                               ),),
 

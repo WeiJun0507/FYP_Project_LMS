@@ -11,9 +11,11 @@ Widget datetimeField(BuildContext context, TextEditingController controller, Str
   if(datetimeValue != null && datetimeValue.isNotEmpty){
     mDate = DateTime.parse(datetimeValue.toString());
     controller.text = DateUtil().getDatetimeFormatDisplay().format(mDate);
+    onChanges(DateUtil().getDatetimeFormatServer().format(mDate));
   } else {
     datetimeValue = DateUtil().getDatetimeFormatServer().format(mDate);
     controller.text = DateUtil().getDatetimeFormatDisplay().format(mDate);
+    onChanges(DateUtil().getDatetimeFormatServer().format(mDate));
   }
 
 

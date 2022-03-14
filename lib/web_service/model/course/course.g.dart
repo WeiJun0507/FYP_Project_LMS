@@ -24,7 +24,8 @@ Course _$CourseFromJson(Map<String, dynamic> json) => Course()
   ..venue = json['venue'] as String?
   ..color = json['color'] as String?
   ..courseImage = json['courseImage'] as String?
-  ..isHide = json['isHide'] as bool?;
+  ..isHide = json['isHide'] as bool?
+  ..createdAt = json['createdAt'] as String?;
 
 Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
       'id': instance.id,
@@ -44,4 +45,5 @@ Map<String, dynamic> _$CourseToJson(Course instance) => <String, dynamic>{
       'color': instance.color,
       'courseImage': instance.courseImage,
       'isHide': instance.isHide,
+      'createdAt': instance.createdAt,
     };

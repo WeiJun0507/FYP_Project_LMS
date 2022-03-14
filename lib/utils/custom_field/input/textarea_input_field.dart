@@ -70,10 +70,7 @@ Widget textareaInputField(TextEditingController controller, VoidCallback onChang
             ),
             minLines: 6,
             maxLines: 6,
-            keyboardType: TextInputType.multiline,
             textCapitalization: TextCapitalization.sentences,
-            enableSuggestions: false,
-            autocorrect: false,
             decoration: InputDecoration(
                 border: OutlineInputBorder(
                     borderSide: BorderSide(color: Colors.grey[200]!)
