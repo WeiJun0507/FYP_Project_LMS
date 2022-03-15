@@ -44,7 +44,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
     controller.accountType = _sPref!.getInt('accountType');
 
-    controller.initRefresh(setState);
+    if (!controller.hasInit) {
+      controller.hasInit = true;
+      controller.initRefresh(setState);
+    }
   }
 
   @override

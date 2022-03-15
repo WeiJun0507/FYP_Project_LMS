@@ -16,7 +16,7 @@ class DashboardController {
 
   int pageNo = 1;
   bool allowNextPage = true,
-      isLoading = false;
+      isLoading = false, hasInit = false;
 
   List<Course> upcomingCourseList = List.empty(growable: true);
   List<Map<String, dynamic>> upcomingDateList = List.empty(growable: true);
@@ -61,6 +61,7 @@ class DashboardController {
     upcomingDateList.clear();
     isLoading = true;
     setState(() {});
+
     if (accountType == 1) {
       //GET ACCOUNT COURSE TAKEN
     } else {
@@ -114,15 +115,22 @@ class DashboardController {
             print('==========================================================================================================');
 
             QuerySnapshot snapshotData = await _db.collection('Course').doc(courseCode).collection('${DateUtil().getDateFormatServer().format(courseCreatedDate)}_$courseCode').get();
-            print('= ${snapshotData.docs} =');
+            print('= ${snapshotData.docs[0].data()} =');
             print('========================================= END FETCH COURSE ACCORDING DATE ====================================');
             if (snapshotData.docs.isNotEmpty) {
               Map<String, dynamic> data = snapshotData.docs[0].data() as Map<String,dynamic>;
               upcomingDateList.add({
                 'date': data['date'],
                 'duration': data['duration'],
+                'createdAt': data['createdAt'],
               });
-              upcomingDateList.sort((a,b) => DateTime.parse(a['duration']).difference(DateTime.parse(b['duration'])).inMilliseconds);
+
+              upcomingDateList.sort((a,b) =>
+                join(DateTime.now(), TimeOfDay(hour: int.tryParse(a['duration'].substring(0,2))!, minute: int.tryParse(a['duration'].substring(3,5))!))
+                    .difference(
+                    join(DateTime.now(), TimeOfDay(hour: int.tryParse(b['duration'].substring(0,2))!, minute: int.tryParse(b['duration'].substring(3,5))!)))
+                    .inMilliseconds
+              );
             }
           }
           setState(() {});
@@ -133,4 +141,7 @@ class DashboardController {
     }
   }
 
+  DateTime join(DateTime date, TimeOfDay time) {
+    return DateTime(date.year, date.month, date.day, time.hour, time.minute);
+  }
 }

@@ -1,6 +1,7 @@
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:fyp_lms/ui/home/course_listing_bs.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/custom_field/custom/custom_expansion_panel.dart';
 import 'package:fyp_lms/utils/general_utils.dart';
@@ -48,9 +49,6 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
 
   @override
   Widget build(BuildContext context) {
-    setState(() {
-
-    });
     return Scaffold(
       backgroundColor: getColorFromHex('F5F5F5'),
       appBar: AppBar(
@@ -298,12 +296,12 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                                           fontWeight: FontWeight.bold,
                                           fontSize: SUB_TITLE,
                                           color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(course.color!)]),
-                                        ),),
+                                        ), textAlign: TextAlign.center,),
                                         title: Text('${course.courseName} ${course.courseCode}', style: GoogleFonts.poppins().copyWith(
                                           fontWeight: FontWeight.bold,
                                           color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(course.color!)]),
                                           fontSize: SUB_TITLE,
-                                        ),),
+                                        ), textAlign: TextAlign.center,),
                                         trailing: Icon(
                                           Icons.zoom_out_map,
                                           size: 18.0,
@@ -339,9 +337,13 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
       floatingActionButton: FloatingActionButton.small(
         onPressed: () {
           //HANDLE FOR DIFFERENT ACCOUNT TYPE
-          // 1 - STUDENT
-          // 2 - LECTURER
-          Navigator.of(context).pushNamed('/AddCourseScreen');
+          if (controller.accountType == 1) {
+            showDialog(
+              context: context,
+              builder: (BuildContext _) => courseListingBS(context, controller, setState));
+          } else {
+            Navigator.of(context).pushNamed('/AddCourseScreen');
+          }
         },
         child: Icon(Icons.add),
       ),

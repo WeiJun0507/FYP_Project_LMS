@@ -5,6 +5,8 @@ import 'package:fyp_lms/ui/home/profile_screen.dart';
 import 'package:fyp_lms/ui/home/uploaded_file_screen.dart';
 import 'package:fyp_lms/utils/constant.dart';
 
+import '../../controller/dashboard/dashboard_controller.dart';
+
 class HomeScreen extends StatefulWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -29,7 +31,6 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
 
     _tabController!.addListener(() {
       switch(_tabController!.index) {
-        //INITIALIZE DASHBOARD SCREEN, POST API FETCHING
         case 0:
           break;
         case 1:
@@ -165,7 +166,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             children: [
               TabBarView(
                 controller: _tabController,
-                children: [
+                children: const [
                   //DASHBOARD
                   DashboardScreen(),
 
