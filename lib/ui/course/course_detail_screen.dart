@@ -8,7 +8,7 @@ import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nb_utils/nb_utils.dart';
-
+import 'package:fyp_lms/ui/dashboard/post_item.dart';
 import 'course_menu_bs.dart';
 
 class CourseDetailScreen extends StatefulWidget {
@@ -421,9 +421,57 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         ],
                       ),
                     ),
-
+                    SizedBox(height: 10),
                     //POST
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Container(
+                          margin: const EdgeInsets.all(normal_padding),
+                          child: Column(
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Row(
+                                children: [
+                                  Container(
+                                    child: Icon(
+                                      Icons.category,
+                                      size: 20,
+                                      color: Colors.grey,
+                                    ),
+                                    margin: EdgeInsets.only(right: 10),
+                                  ),
 
+                                  Text('Course Feed > ',
+                                      style: GoogleFonts.poppins().copyWith(
+                                          fontSize: SUB_TITLE,
+                                          color: Colors.grey,
+                                          fontWeight: FontWeight.w500)),
+                                ],
+                              ),
+                            ],
+                          ),
+                        ),
+                        Container(
+                          margin: const EdgeInsets.only(right: large_padding, top: normal_padding, bottom: normal_padding),
+                          padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: small_padding, bottom: small_padding),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                            color: BG_COLOR_4.withOpacity(0.2),
+                          ),
+                          child: Icon(Icons.add, size: 18,),
+                        ).onTap((){
+                          Navigator.of(context).pushNamed('/AddPostScreen', arguments: {
+                            'course': controller.course,
+                          });
+                        })
+                      ],
+                    ),
+                    postItem(),
+                    postItem(),
+                    postItem(),
+                    postItem(),
+                    SizedBox(height:10),
                   ],
                 ),
               ),
