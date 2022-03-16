@@ -6,7 +6,6 @@ import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/general_utils.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:fyp_lms/ui/dashboard/post_item.dart';
 import 'course_menu_bs.dart';
@@ -454,7 +453,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         ),
                         Container(
                           margin: const EdgeInsets.only(right: large_padding, top: normal_padding, bottom: normal_padding),
-                          padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: small_padding, bottom: small_padding),
+                          padding: const EdgeInsets.only(left: normal_padding, right: normal_padding, top: small_padding, bottom: small_padding),
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                             color: BG_COLOR_4.withOpacity(0.2),
@@ -462,7 +461,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                           child: Icon(Icons.add, size: 18,),
                         ).onTap((){
                           Navigator.of(context).pushNamed('/AddPostScreen', arguments: {
-                            'course': controller.course,
+                            'courseId': controller.course!.id!,
                           });
                         })
                       ],

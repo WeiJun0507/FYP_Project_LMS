@@ -9,7 +9,7 @@ import 'package:nb_utils/nb_utils.dart';
 Widget roundCornerImage(
     String path,
     Function(String path) onDelete,
-    {var size = 70.0, var space = 6, var showDelete = true, offlineMode = true}){
+    {var size = 70.0, var space = 6, var showDelete = true}){
 
 
   return Stack(
@@ -26,26 +26,7 @@ Widget roundCornerImage(
           child: imageWidget(path, size),
         ),
       ),
-      (!path.contains('http') && !offlineMode) ? Container(
-        height: size,
-        width: size,
-        decoration: BoxDecoration(
-            color: Colors.white60,
-            border: Border.all(color: Colors.grey[300]!,width: 1.5),
-            borderRadius: BorderRadius.all(Radius.circular(11))),
-        margin: EdgeInsets.only(right: 6),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              SizedBox(
-                child: CircularProgressIndicator(strokeWidth: 3),
-                height: 24.0,
-                width: 24.0,
-              )
-            ]
-        ),
-      ) : SizedBox(),
+
       showDelete ? Positioned(
         child: Container(
           height: 24,

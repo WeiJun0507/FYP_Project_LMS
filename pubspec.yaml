@@ -59,6 +59,9 @@ dependencies:
   #FILE PICKER
   file_picker: ^4.5.1
 
+  #LAUNCH FILE
+  open_file: ^3.2.1
+
   #OTHER/ UTILS
   intl: ^0.17.0
   nb_utils: ^4.4.12

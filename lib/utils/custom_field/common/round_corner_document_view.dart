@@ -10,8 +10,7 @@ Widget roundCornerDocument(
     {var size = 80.0,
       space = 6.0,
       iconSize = 35.0,
-      showDelete = true,
-      offlineMode = true}) {
+      showDelete = true}) {
   return Stack(
     children: [
       AbsorbPointer(
@@ -27,26 +26,6 @@ Widget roundCornerDocument(
         ),
       ),
 
-      (!path.contains('http') && !offlineMode) ? Container(
-        height: size,
-        width: size,
-        decoration: BoxDecoration(
-            color: Colors.white60,
-            border: Border.all(color: Colors.grey[300]!,width: 1.5),
-            borderRadius: BorderRadius.all(Radius.circular(11))),
-        margin: EdgeInsets.only(right: 6),
-        child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: const [
-              SizedBox(
-                child: CircularProgressIndicator(strokeWidth: 3),
-                height: 24.0,
-                width: 24.0,
-              )
-            ]
-        ),
-      ) : SizedBox(),
       showDelete ?
       Positioned(
         child: Container(
