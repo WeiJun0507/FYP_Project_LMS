@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_lms/ui/auth_screen/create_account_screen.dart';
 import 'package:fyp_lms/ui/course/add_course_screen.dart';
+import 'package:fyp_lms/ui/course/add_post_screen.dart';
 import 'package:fyp_lms/ui/course/course_detail_screen.dart';
 import 'package:fyp_lms/ui/home/course_listing_screen.dart';
 import 'package:fyp_lms/ui/home/dashboard_screen.dart';
@@ -11,6 +12,7 @@ import 'package:fyp_lms/ui/home/profile_screen.dart';
 import 'package:fyp_lms/ui/home/uploaded_file_screen.dart';
 import 'package:fyp_lms/ui/splash_screen.dart';
 import 'package:fyp_lms/ui/auth_screen/verification_screen.dart';
+
 
 Map<String, Widget Function(BuildContext)> routesName = {
   '/SplashScreen': (context) => const SplashScreen(),
@@ -27,5 +29,6 @@ Map<String, Widget Function(BuildContext)> routesName = {
 
   '/AddCourseScreen': (context) => const AddCourseScreen(),
   '/CourseDetailScreen': (context) => const CourseDetailScreen(),
+  '/AddPostScreen': (context) => const AddPostScreen(),
 
 };
