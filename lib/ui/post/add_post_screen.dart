@@ -35,8 +35,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
 
   int postTypeSelection = 0;
 
-  String? timeStartDisplay;
-  String? timeEndDisplay;
 
   @override
   void initState() {
@@ -47,10 +45,6 @@ class _AddPostScreenState extends State<AddPostScreen> {
         initializeData();
       });
     });
-
-
-    timeStartDisplay = DateUtil().getDatetimeFormatServer().format(DateTime.now());
-    timeEndDisplay = DateUtil().getDatetimeFormatServer().format(DateTime.now().add(Duration(hours: 2)));
   }
 
   initializeData() {
@@ -117,256 +111,251 @@ class _AddPostScreenState extends State<AddPostScreen> {
               fontWeight: FontWeight.bold,
             ),),
           ).onTap(() {
-            // controller.compileData(
-            //   context,
-            //   codeController.text,
-            //   nameController.text,
-            //   courseDescription.text,
-            //   courseOverview.text,
-            //   courseAnnouncement.text,
-            //   courseMidtermDate.text,
-            //   courseAssignmentDate.text,
-            //   courseFinal.text,
-            //   colorSelection,
-            //   timeStartDisplay!,
-            //   timeEndDisplay!,
-            //   courseVenue.text,
-            //   studentEnrolled.text,
-            // );
+            controller.compileData(
+              context, titleController.text, notesDescription.text,
+            );
           })
         ],
       ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            Container(
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: controller.color ?? BG_COLOR_4,
-                  borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(10.0),
-                    bottomRight: Radius.circular(10.0),
-                  ),
-                ),
-                padding: const EdgeInsets.all(large_padding),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: <Widget> [
-                        Expanded(
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: <Widget>[
-                              //Type
-                              Text('Post Type:', style: GoogleFonts.poppins().copyWith(
-                                fontSize: TITLE,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.white,
-                              ),),
-                              //TextField
-                              Container(
-                                margin: const EdgeInsets.all(normal_padding),
-                                padding: const EdgeInsets.all(large_padding),
-                                decoration: BoxDecoration(
-                                  color: Colors.white,
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                ),
-                                width: MediaQuery.of(context).size.width,
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Text(postTypeController.text, style: GoogleFonts.poppins().copyWith(
-                                        fontWeight: FontWeight.w600,
-                                      )),
-                                    ),
-                                    Icon(Icons.arrow_drop_down, color: Colors.black54),
-                                  ],
-                                ),
-                              ).onTap(() {
-                                showDialog(
-                                    barrierDismissible: true,
-                                    context: context,
-                                    builder: (BuildContext ctx) => DropdownPicker(controller.postTypeSelection, 'Post Type')
-                                ).then((newValue) {
-                                  if (newValue != null && newValue is int) {
-                                    setState(() {
-                                      postTypeController.text = controller.postTypeSelection[newValue];
-                                      controller.type = controller.postTypeSelection[newValue];
-                                    });
-                                  }
-                                });
-                              }),
-                            ]
-                          ),
-                        ),
-
-                        Expanded(
-                            child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                children: <Widget>[
-                                  //Type
-                                  Text('Post Type Color:', style: GoogleFonts.poppins().copyWith(
-                                    fontSize: TITLE,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.white,
-                                  ),),
-                                  //TextField
-                                  Container(
-                                    margin: const EdgeInsets.all(normal_padding),
-                                    padding: const EdgeInsets.all(large_padding),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                                    ),
-                                    width: MediaQuery.of(context).size.width,
-                                    child: Row(
-                                      children: [
-                                        Expanded(
-                                          child: Text(postTypeColorController.text, style: GoogleFonts.poppins().copyWith(
-                                            fontWeight: FontWeight.w600,
-                                          )),
-                                        ),
-                                        Icon(Icons.arrow_drop_down, color: Colors.black54),
-                                      ],
-                                    ),
-                                  ).onTap(() {
-                                    showDialog(
-                                        barrierDismissible: true,
-                                        context: context,
-                                        builder: (BuildContext ctx) => DropdownPicker(controller.postColorSelection, 'Post Type')
-                                    ).then((newValue) {
-                                      if (newValue != null && newValue is int) {
-                                        setState(() {
-                                          postTypeColorController.text = controller.postColorSelection[newValue];
-                                          controller.typeColor = controller.postColorSelectionColor[newValue];
-                                        });
-                                      }
-                                    });
-                                  }),
-                                ]
-                            ),
-                        ),
-                      ]
+      body: GestureDetector(
+        onTap: () {
+          FocusScopeNode currentFocus = FocusScope.of(context);
+          if (!currentFocus.hasPrimaryFocus) {
+            currentFocus.unfocus();
+          }
+        },
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              Container(
+                  width: MediaQuery.of(context).size.width,
+                  decoration: BoxDecoration(
+                    color: controller.color ?? BG_COLOR_4,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(10.0),
+                      bottomRight: Radius.circular(10.0),
                     ),
-                    const SizedBox(height: 7),
-
-
-                    //TITLE
-                    Text('Course Title:', style: GoogleFonts.poppins().copyWith(
-                      fontSize: TITLE,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.white,
-                    ),),
-                    //TextField
-                    Container(
-                        margin: const EdgeInsets.all(normal_padding),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                        ),
-                        width: MediaQuery.of(context).size.width,
-                        child: TextField(
-                          controller: titleController,
-                          onChanged: (value) {
-                            setState(() {});
-                          },
-                          style: GoogleFonts.poppins().copyWith(
-                              fontSize: 14, color: Colors.black
-                          ),
-                          minLines: 1,
-                          maxLines: 1,
-                          keyboardType: TextInputType.text,
-                          textCapitalization: TextCapitalization.sentences,
-                          decoration: InputDecoration(
-                              border: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey[200]!),
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                              ),
-                              enabledBorder: OutlineInputBorder(
-                                  borderSide: BorderSide(color: Colors.grey[200]!),
-                                  borderRadius: BorderRadius.all(Radius.circular(10.0))
-                              ),
-                              contentPadding: const EdgeInsets.only(left: 12, bottom: 10, top: 10, right: 12),
-                              suffixIcon: titleController.text.isEmpty ? null :
-                              IconButton(
-                                iconSize: 20,
-                                icon: const Icon(Icons.cancel),
-                                onPressed: (){
-                                  setState(() {
-                                    titleController.text = '';
+                  ),
+                  padding: const EdgeInsets.all(large_padding),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: <Widget> [
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: <Widget>[
+                                //Type
+                                Text('Post Type:', style: GoogleFonts.poppins().copyWith(
+                                  fontSize: TITLE,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),),
+                                //TextField
+                                Container(
+                                  margin: const EdgeInsets.all(normal_padding),
+                                  padding: const EdgeInsets.all(large_padding),
+                                  decoration: BoxDecoration(
+                                    color: Colors.white,
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                  ),
+                                  width: MediaQuery.of(context).size.width,
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Text(postTypeController.text, style: GoogleFonts.poppins().copyWith(
+                                          fontWeight: FontWeight.w600,
+                                        )),
+                                      ),
+                                      Icon(Icons.arrow_drop_down, color: Colors.black54),
+                                    ],
+                                  ),
+                                ).onTap(() {
+                                  showDialog(
+                                      barrierDismissible: true,
+                                      context: context,
+                                      builder: (BuildContext ctx) => DropdownPicker(controller.postTypeSelection, 'Post Type')
+                                  ).then((newValue) {
+                                    if (newValue != null && newValue is int) {
+                                      setState(() {
+                                        postTypeController.text = controller.postTypeSelection[newValue];
+                                        controller.type = controller.postTypeSelection[newValue];
+                                      });
+                                    }
                                   });
-                                },
-                              )
+                                }),
+                              ]
+                            ),
                           ),
+
+                          Expanded(
+                              child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: <Widget>[
+                                    //Type
+                                    Text('Post Type Color:', style: GoogleFonts.poppins().copyWith(
+                                      fontSize: TITLE,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.white,
+                                    ),),
+                                    //TextField
+                                    Container(
+                                      margin: const EdgeInsets.all(normal_padding),
+                                      padding: const EdgeInsets.all(large_padding),
+                                      decoration: BoxDecoration(
+                                        color: Colors.white,
+                                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                                      ),
+                                      width: MediaQuery.of(context).size.width,
+                                      child: Row(
+                                        children: [
+                                          Expanded(
+                                            child: Text(postTypeColorController.text, style: GoogleFonts.poppins().copyWith(
+                                              fontWeight: FontWeight.w600,
+                                            )),
+                                          ),
+                                          Icon(Icons.arrow_drop_down, color: Colors.black54),
+                                        ],
+                                      ),
+                                    ).onTap(() {
+                                      showDialog(
+                                          barrierDismissible: true,
+                                          context: context,
+                                          builder: (BuildContext ctx) => DropdownPicker(controller.postColorSelection, 'Post Type')
+                                      ).then((newValue) {
+                                        if (newValue != null && newValue is int) {
+                                          setState(() {
+                                            postTypeColorController.text = controller.postColorSelection[newValue];
+                                            controller.typeColor = controller.postColorSelectionColor[newValue];
+                                          });
+                                        }
+                                      });
+                                    }),
+                                  ]
+                              ),
+                          ),
+                        ]
+                      ),
+                      const SizedBox(height: 7),
+
+
+                      //TITLE
+                      Text('Post Title:', style: GoogleFonts.poppins().copyWith(
+                        fontSize: TITLE,
+                        fontWeight: FontWeight.w600,
+                        color: Colors.white,
+                      ),),
+                      //TextField
+                      Container(
+                          margin: const EdgeInsets.all(normal_padding),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                          ),
+                          width: MediaQuery.of(context).size.width,
+                          child: TextField(
+                            controller: titleController,
+                            onChanged: (value) {
+                              setState(() {});
+                            },
+                            style: GoogleFonts.poppins().copyWith(
+                                fontSize: 14, color: Colors.black
+                            ),
+                            minLines: 1,
+                            maxLines: 1,
+                            keyboardType: TextInputType.text,
+                            textCapitalization: TextCapitalization.sentences,
+                            decoration: InputDecoration(
+                                border: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey[200]!),
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                ),
+                                enabledBorder: OutlineInputBorder(
+                                    borderSide: BorderSide(color: Colors.grey[200]!),
+                                    borderRadius: BorderRadius.all(Radius.circular(10.0))
+                                ),
+                                contentPadding: const EdgeInsets.only(left: 12, bottom: 10, top: 10, right: 12),
+                                suffixIcon: titleController.text.isEmpty ? null :
+                                IconButton(
+                                  iconSize: 20,
+                                  icon: const Icon(Icons.cancel),
+                                  onPressed: (){
+                                    setState(() {
+                                      titleController.text = '';
+                                    });
+                                  },
+                                )
+                            ),
+                          )
+                      ),
+                    ],
+                  )
+              ),
+              const SizedBox(height: 7),
+
+              //ASSIGNED_TO
+              Container(
+                color: Colors.white,
+                margin: EdgeInsets.only(bottom: 7),
+                padding: EdgeInsets.only(top: 12, left: 14, bottom: 12, right: 12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.person_pin_rounded,
+                      size: 22,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            //ASSIGNED CHIP VIEW
+                            Text(controller.createdByName ?? 'Empty', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins().copyWith(
+                                fontSize: SUB_TITLE,
+                                fontWeight: FontWeight.w600,
+                            ),),
+                          ],
                         )
                     ),
                   ],
-                )
-            ),
-            const SizedBox(height: 7),
-
-            //ASSIGNED_TO
-            Container(
-              color: Colors.white,
-              margin: EdgeInsets.only(bottom: 7),
-              padding: EdgeInsets.only(top: 12, left: 14, bottom: 12, right: 12),
-              child: Row(
-                children: [
-                  Icon(
-                    Icons.person_pin_rounded,
-                    size: 22,
-                    color: Colors.grey,
-                  ),
-                  SizedBox(width: 10),
-                  Expanded(
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          //ASSIGNED CHIP VIEW
-                          Text(controller.createdByName ?? 'Empty', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins().copyWith(
-                              fontSize: SUB_TITLE,
-                              fontWeight: FontWeight.w600,
-                          ),),
-                        ],
-                      )
-                  ),
-                ],
+                ),
               ),
-            ),
 
-            Container(
-              color: Colors.white,
-              padding: EdgeInsets.only(top: large_padding,bottom: normal_padding),
-              alignment: Alignment.center,
-              child: Text('Post Detail', style: TextStyle(
-                  fontWeight: FontWeight.w600
-              )),
-            ),
-
-            Container(
-              color: Colors.white,
-              child: Column(
-                children: [
-                  textareaInputField(notesDescription, () {}, 'Post Description:', ),
-
-
-                  //DROPDOWN SELECT COLOR
-                  dropdownField(context, controller.postColorSelection, controller.postColorSelectionColor, postColorController, () {
-                    setState(() {
-                      int? colorSelection = controller.postColorSelection.indexOf(postColorController.text.toString());
-                      controller.color = controller.postColorSelectionColor[colorSelection];
-                    });
-                  }, 'Post Color'),
-
-                  //ATTACHMENT UPLOAD
-                  attachmentField(context, controller, 'Post Material', controller.attachments!, () {
-                   setState(() {});
-                  }),
-                ],
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(top: large_padding,bottom: normal_padding),
+                alignment: Alignment.center,
+                child: Text('Post Detail', style: TextStyle(
+                    fontWeight: FontWeight.w600
+                )),
               ),
-            )
-          ],
+
+              Container(
+                color: Colors.white,
+                child: Column(
+                  children: [
+                    textareaInputField(notesDescription, () {}, 'Post Description:', ),
+
+
+                    //DROPDOWN SELECT COLOR
+                    dropdownField(context, controller.postColorSelection, controller.postColorSelectionColor, postColorController, () {
+                      setState(() {
+                        int? colorSelection = controller.postColorSelection.indexOf(postColorController.text.toString());
+                        controller.color = controller.postColorSelectionColor[colorSelection];
+                      });
+                    }, 'Post Color'),
+
+                    //ATTACHMENT UPLOAD
+                    attachmentField(context, controller, 'Post Material', controller.attachments!, controller.attachmentsFull!, () {
+                     setState(() {});
+                    }),
+                  ],
+                ),
+              )
+            ],
+          ),
         ),
       ),
     );

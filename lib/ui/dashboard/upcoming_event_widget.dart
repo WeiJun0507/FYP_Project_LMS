@@ -26,9 +26,9 @@ Widget upcomingEventWidget(BuildContext context, pageController, Course course, 
       decoration: BoxDecoration(
         gradient: LinearGradient(
           colors: [
-            pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)],
-            pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)].withOpacity(0.95),
-            pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)].withOpacity(0.9),
+            pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)],
+            pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)].withOpacity(0.95),
+            pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)].withOpacity(0.9),
           ],
           begin: Alignment.topLeft,
           end: Alignment.bottomRight,
@@ -51,21 +51,21 @@ Widget upcomingEventWidget(BuildContext context, pageController, Course course, 
                 children: [
                   Text('Course Name: ', style: GoogleFonts.poppins().copyWith(
                     fontWeight: FontWeight.w600,
-                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                    color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                     fontSize: TITLE,
                   )),
                   Text(course.courseName!, style: GoogleFonts.poppins().copyWith(
-                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                    color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                   )),
                   const SizedBox(width: normal_padding),
 
                   Text('Course Code: ', style: GoogleFonts.poppins().copyWith(
                     fontWeight: FontWeight.w600,
-                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                    color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                     fontSize: TITLE,
                   )),
                   Text(course.courseCode!, style: GoogleFonts.poppins().copyWith(
-                    color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                    color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                   )),
 
                   const SizedBox(height: x_large_padding),
@@ -81,13 +81,13 @@ Widget upcomingEventWidget(BuildContext context, pageController, Course course, 
                             Text('Time: ', style: GoogleFonts.poppins().copyWith(
                               fontWeight: FontWeight.w600,
                               fontSize: SUB_TITLE,
-                              color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                              color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                             )),
                             const SizedBox(width: 2.0),
 
                             Text(date['date'] + ' ' + date['duration'].substring(0,5) + '-' + date['duration'].substring(11,16), style: GoogleFonts.poppins().copyWith(
                               fontSize: SUB_TITLE,
-                              color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                              color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                             ), softWrap: true,),
 
                           ],
@@ -100,13 +100,13 @@ Widget upcomingEventWidget(BuildContext context, pageController, Course course, 
                         children: [
                           Text('Venue: ', style: GoogleFonts.poppins().copyWith(
                             fontWeight: FontWeight.w600,
-                            color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                            color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                           )),
                           const SizedBox(width: 2.0),
 
                           Text(course.venue!, style: GoogleFonts.poppins().copyWith(
                             fontSize: SUB_TITLE,
-                            color: GeneralUtil().getTextColor(pageController.courseColorSelectionColor[pageController.courseColorSelection.indexOf(course.color!)]),
+                            color: GeneralUtil().getTextColor(pageController.colorSelectionColor[pageController.colorSelection.indexOf(course.color!)]),
                           ), softWrap: true,),
 
                         ],

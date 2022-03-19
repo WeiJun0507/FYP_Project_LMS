@@ -13,6 +13,8 @@ import 'package:fyp_lms/ui/home/uploaded_file_screen.dart';
 import 'package:fyp_lms/ui/splash_screen.dart';
 import 'package:fyp_lms/ui/auth_screen/verification_screen.dart';
 
+import '../ui/post/post_detail_screen.dart';
+
 
 Map<String, Widget Function(BuildContext)> routesName = {
   '/SplashScreen': (context) => const SplashScreen(),
@@ -29,6 +31,7 @@ Map<String, Widget Function(BuildContext)> routesName = {
 
   '/AddCourseScreen': (context) => const AddCourseScreen(),
   '/CourseDetailScreen': (context) => const CourseDetailScreen(),
-  '/AddPostScreen': (context) => const AddPostScreen(),
 
+  '/AddPostScreen': (context) => const AddPostScreen(),
+  '/PostDetailScreen': (context) => const PostDetailScreen(),
 };

@@ -3,7 +3,7 @@ import 'package:json_annotation/json_annotation.dart';
 part 'comment.g.dart';
 
 @JsonSerializable()
-class Post {
+class Comment {
   String? id;
   String? commentCreated;
   String? createdDate;
@@ -14,9 +14,9 @@ class Post {
   String? courseBelonging;
 
 
-  Post();
+  Comment();
 
-  factory Post.fromJson(Map<String, dynamic> json) => _$PostFromJson(json);
-  Map<String, dynamic> toJson() => _$PostToJson(this);
+  factory Comment.fromJson(Map<String, dynamic> json) => _$CommentFromJson(json);
+  Map<String, dynamic> toJson() => _$CommentToJson(this);
 
 }

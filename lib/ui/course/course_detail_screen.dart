@@ -25,35 +25,56 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   @override
   void initState() {
     super.initState();
+    setState(() {
+      controller.isLoading = true;
+    });
     SharedPreferences.getInstance().then((value) {
       setState(() {
-        controller.isLoading = true;
         _sPref = value;
         initializeData();
+
       });
     });
-
-
   }
 
-  initializeData() {
+  initializeData() async {
     //_sPref.setString('accountInfo', jsonEncode(createdUser));
     controller.accountId = _sPref!.getString('account');
     controller.accountName = _sPref!.getString('username');
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
     controller.accountType = _sPref!.getInt('accountType');
+
     WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
       final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
       if (arguments['course'] != null) {
         setState(() {
-          controller.isLoading = false;
           controller.course = arguments['course'];
+          fetchPosts();
         });
       }
     });
-
     setState(() {
       controller.isLoading = false;
+    });
+  }
+
+  fetchPosts() async {
+    await controller.fetchPost(context, () {
+      setState(() {});
+    }).then((result) {
+      setState(() {
+        controller.isLoading = false;
+      });
+      return true;
+    });
+  }
+
+  refreshCourse(BuildContext context) async {
+    setState(() {
+      controller.isLoading = true;
+    });
+    await controller.refreshCourse(context).then((_) async {
+      await fetchPosts();
     });
   }
 
@@ -78,13 +99,13 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                     leadingWidth: 56,
                     leading: Icon(
                       Icons.arrow_back,
-                      color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                      color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                     ).onTap(() => Navigator.of(context).pop()),
                     actions: [
                       IconButton(
                         icon: Icon(
                           Icons.more_vert,
-                          color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                          color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                         ),
                         onPressed: () {
                           showModalBottomSheet(
@@ -125,17 +146,17 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         Text(controller.course!.courseName ?? '-', style: GoogleFonts.poppins().copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.w500,
-                          color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)])
+                          color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)])
                         ),),
                         //COURSE CODE
                         Text(controller.course!.courseCode ?? '-', style: GoogleFonts.poppins().copyWith(
                           fontSize: HINT_TEXT,
                           fontWeight: FontWeight.w500,
-                          color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                          color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                         ),),
                       ],
                     ),
-                    backgroundColor: controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)].withOpacity(0.8),
+                    backgroundColor: controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)].withOpacity(0.8),
                     flexibleSpace: LayoutBuilder(
                       builder: (BuildContext ctx, BoxConstraints constraints) {
                         return FlexibleSpaceBar(
@@ -148,19 +169,19 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                 controller.course!.courseMidtermDate == null ? const SizedBox() : Container(
                                   padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: normal_padding, bottom: normal_padding),
                                   decoration: BoxDecoration(
-                                    color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
+                                    color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
                                     borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                   ),
                                   child: Column(
                                     crossAxisAlignment: CrossAxisAlignment.start,
                                     children: [
                                       Text('Mid Term:',style: GoogleFonts.poppins().copyWith(
-                                        color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                                        color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                                         fontSize: SUB_TITLE,
                                         fontWeight: FontWeight.w500,
                                       ),),
                                       Text(controller.course!.courseMidtermDate!,style: GoogleFonts.poppins().copyWith(
-                                        color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                                        color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                                         fontWeight: FontWeight.w600,
                                       ),),
 
@@ -177,19 +198,19 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         child: Container(
                                           padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: normal_padding, bottom: normal_padding),
                                           decoration: BoxDecoration(
-                                            color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
+                                            color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
                                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                           ),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Assignment: ',style: GoogleFonts.poppins().copyWith(
-                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                                                color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                                                 fontSize: SUB_TITLE,
                                                 fontWeight: FontWeight.w500,
                                               ),),
                                               Text(controller.course!.courseAssignmentDate!,style: GoogleFonts.poppins().copyWith(
-                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                                                color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                                                 fontWeight: FontWeight.w600,
                                               ),),
 
@@ -202,19 +223,19 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                         child: Container(
                                           padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: normal_padding, bottom: normal_padding),
                                           decoration: BoxDecoration(
-                                            color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
+                                            color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]) == Colors.white ? Colors.white10 : Colors.black12,
                                             borderRadius: BorderRadius.all(Radius.circular(5.0)),
                                           ),
                                           child: Column(
                                             crossAxisAlignment: CrossAxisAlignment.start,
                                             children: [
                                               Text('Final Exam:',style: GoogleFonts.poppins().copyWith(
-                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                                                color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                                                 fontSize: SUB_TITLE,
                                                 fontWeight: FontWeight.w500,
                                               ),),
                                               Text(controller.course!.courseFinal!,style: GoogleFonts.poppins().copyWith(
-                                                color: GeneralUtil().getTextColor(controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)]),
+                                                color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)]),
                                                 fontWeight: FontWeight.w600,
                                               ),),
 
@@ -235,243 +256,261 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                 ];
               },
               //CONTENT HERE
-              body: SingleChildScrollView(
-                physics: ClampingScrollPhysics(),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    //ANNOUNCEMENT
-                    Container(
-                      padding: const EdgeInsets.all(normal_padding),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                child: Icon(
-                                  Icons.category,
-                                  size: 20,
-                                  color: Colors.grey,
-                                ),
-                                margin: EdgeInsets.only(right: 10),
-                              ),
-
-                              Text('Announcement > ',
-                                  style: GoogleFonts.poppins().copyWith(
-                                      fontSize: SUB_TITLE,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w500)),
-                            ],
-                          ),
-
-                          Container(
-                            margin: const EdgeInsets.all(normal_padding),
-                            child: Text(controller.course!.courseAnnouncement!,
-                                style: GoogleFonts.poppins().copyWith(
-                                    fontWeight: FontWeight.w500)),
-                          ),
-
-                        ],
-                      ),
-                    ),
-
-                    Container(
-                      margin: EdgeInsets.only(left: x_large_padding, right: x_large_padding),
-                      //padding: EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                          color: controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)].withOpacity(0.15),
-                          borderRadius: BorderRadius.all(Radius.circular(6))
-                      ),
-                      child: IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
+              body: RefreshIndicator(
+                onRefresh: () => refreshCourse(context),
+                displacement: 60,
+                child: SingleChildScrollView(
+                  physics: const ClampingScrollPhysics(),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      //ANNOUNCEMENT
+                      Container(
+                        padding: const EdgeInsets.all(normal_padding),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Container(
-                              width: 4,
-                              decoration: BoxDecoration(
-                                  color: controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)],
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(6), topLeft: Radius.circular(6))
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.only(top: normal_padding, bottom: normal_padding, left: large_padding),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Lecturer:',style: GoogleFonts.poppins().copyWith(
-                                            fontSize: SUB_TITLE,
-                                            fontWeight: FontWeight.w500,
-                                          ),),
-                                          Text(controller.course!.assignedToName!, style: GoogleFonts.poppins().copyWith(
-
-                                            fontWeight: FontWeight.w600,
-                                          ),),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.only(right: 12),
-                                      child: Icon(
-                                        Icons.chevron_right,
-                                        color: Colors.grey,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    //STUDENT ENROLLED
-                    Container(
-                      margin: EdgeInsets.only(left: x_large_padding, right: x_large_padding),
-                      //padding: EdgeInsets.all(1),
-                      decoration: BoxDecoration(
-                          color: Colors.grey[200],
-                          borderRadius: BorderRadius.all(Radius.circular(6))
-                      ),
-                      child: IntrinsicHeight(
-                        child: Row(
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              width: 4,
-                              decoration: BoxDecoration(
-                                  color: controller.courseColorSelectionColor[controller.courseColorSelection.indexOf(controller.course!.color!)],
-                                  borderRadius: BorderRadius.only(bottomLeft: Radius.circular(6), topLeft: Radius.circular(6))
-                              ),
-                            ),
-                            Expanded(
-                              child: Container(
-                                padding: EdgeInsets.only(top: normal_padding, bottom: normal_padding, left: large_padding),
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: Column(
-                                        crossAxisAlignment: CrossAxisAlignment.start,
-                                        children: [
-                                          Text('Student Enrolled:',style: GoogleFonts.poppins().copyWith(
-                                            fontSize: SUB_TITLE,
-                                            fontWeight: FontWeight.w500,
-                                          ),),
-                                          Text(controller.course!.studentEnrolled!, style: GoogleFonts.poppins().copyWith(
-
-                                            fontWeight: FontWeight.w600,
-                                          ),),
-                                        ],
-                                      ),
-                                    ),
-                                    Container(
-                                      padding: EdgeInsets.only(right: 12),
-                                      child: Icon(
-                                        Icons.chevron_right,
-                                        color: Colors.grey,
-                                      ),
-                                    )
-                                  ],
-                                ),
-                              ),
-                            )
-                          ],
-                        ),
-                      ),
-                    ),
-                    SizedBox(height: 10),
-
-                    Container(
-                      margin: const EdgeInsets.all(normal_padding),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Row(
-                            children: [
-                              Container(
-                                child: Icon(
-                                  Icons.category,
-                                  size: 20,
-                                  color: Colors.grey,
-                                ),
-                                margin: EdgeInsets.only(right: 10),
-                              ),
-
-                              Text('Course Overview > ',
-                                  style: GoogleFonts.poppins().copyWith(
-                                      fontSize: SUB_TITLE,
-                                      color: Colors.grey,
-                                      fontWeight: FontWeight.w500)),
-                            ],
-                          ),
-
-                          Padding(
-                            padding: const EdgeInsets.all(8.0),
-                            child: Text(controller.course!.courseOverview!, style: GoogleFonts.poppins().copyWith(
-                              fontSize: SUB_TITLE,
-                            ),),
-                          ),
-
-                        ],
-                      ),
-                    ),
-                    SizedBox(height: 10),
-                    //POST
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                      children: [
-                        Container(
-                          margin: const EdgeInsets.all(normal_padding),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Row(
-                                children: [
-                                  Container(
-                                    child: Icon(
-                                      Icons.category,
-                                      size: 20,
-                                      color: Colors.grey,
-                                    ),
-                                    margin: EdgeInsets.only(right: 10),
+                            Row(
+                              children: [
+                                Container(
+                                  child: Icon(
+                                    Icons.category,
+                                    size: 20,
+                                    color: Colors.grey,
                                   ),
+                                  margin: EdgeInsets.only(right: 10),
+                                ),
 
-                                  Text('Course Feed > ',
-                                      style: GoogleFonts.poppins().copyWith(
-                                          fontSize: SUB_TITLE,
-                                          color: Colors.grey,
-                                          fontWeight: FontWeight.w500)),
-                                ],
+                                Text('Announcement > ',
+                                    style: GoogleFonts.poppins().copyWith(
+                                        fontSize: SUB_TITLE,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+
+                            Container(
+                              margin: const EdgeInsets.all(normal_padding),
+                              child: Text(controller.course!.courseAnnouncement!,
+                                  style: GoogleFonts.poppins().copyWith(
+                                      fontWeight: FontWeight.w500)),
+                            ),
+
+                          ],
+                        ),
+                      ),
+
+                      Container(
+                        margin: EdgeInsets.only(left: x_large_padding, right: x_large_padding),
+                        //padding: EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                            color: controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)].withOpacity(0.15),
+                            borderRadius: BorderRadius.all(Radius.circular(6))
+                        ),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                width: 4,
+                                decoration: BoxDecoration(
+                                    color: controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)],
+                                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(6), topLeft: Radius.circular(6))
+                                ),
                               ),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.only(top: normal_padding, bottom: normal_padding, left: large_padding),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Lecturer:',style: GoogleFonts.poppins().copyWith(
+                                              fontSize: SUB_TITLE,
+                                              fontWeight: FontWeight.w500,
+                                            ),),
+                                            Text(controller.course!.assignedToName!, style: GoogleFonts.poppins().copyWith(
+
+                                              fontWeight: FontWeight.w600,
+                                            ),),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(right: 12),
+                                        child: Icon(
+                                          Icons.chevron_right,
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
                             ],
                           ),
                         ),
-                        Container(
-                          margin: const EdgeInsets.only(right: large_padding, top: normal_padding, bottom: normal_padding),
-                          padding: const EdgeInsets.only(left: normal_padding, right: normal_padding, top: small_padding, bottom: small_padding),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.all(Radius.circular(5.0)),
-                            color: BG_COLOR_4.withOpacity(0.2),
+                      ),
+                      SizedBox(height: 10),
+                      //STUDENT ENROLLED
+                      Container(
+                        margin: EdgeInsets.only(left: x_large_padding, right: x_large_padding),
+                        //padding: EdgeInsets.all(1),
+                        decoration: BoxDecoration(
+                            color: Colors.grey[200],
+                            borderRadius: BorderRadius.all(Radius.circular(6))
+                        ),
+                        child: IntrinsicHeight(
+                          child: Row(
+                            crossAxisAlignment: CrossAxisAlignment.stretch,
+                            children: [
+                              Container(
+                                width: 4,
+                                decoration: BoxDecoration(
+                                    color: controller.colorSelectionColor[controller.colorSelection.indexOf(controller.course!.color!)],
+                                    borderRadius: BorderRadius.only(bottomLeft: Radius.circular(6), topLeft: Radius.circular(6))
+                                ),
+                              ),
+                              Expanded(
+                                child: Container(
+                                  padding: EdgeInsets.only(top: normal_padding, bottom: normal_padding, left: large_padding),
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: Column(
+                                          crossAxisAlignment: CrossAxisAlignment.start,
+                                          children: [
+                                            Text('Student Enrolled:',style: GoogleFonts.poppins().copyWith(
+                                              fontSize: SUB_TITLE,
+                                              fontWeight: FontWeight.w500,
+                                            ),),
+                                            Text(controller.course!.studentEnrolled!, style: GoogleFonts.poppins().copyWith(
+
+                                              fontWeight: FontWeight.w600,
+                                            ),),
+                                          ],
+                                        ),
+                                      ),
+                                      Container(
+                                        padding: EdgeInsets.only(right: 12),
+                                        child: Icon(
+                                          Icons.chevron_right,
+                                          color: Colors.grey,
+                                        ),
+                                      )
+                                    ],
+                                  ),
+                                ),
+                              )
+                            ],
                           ),
-                          child: Icon(Icons.add, size: 18,),
-                        ).onTap((){
-                          Navigator.of(context).pushNamed('/AddPostScreen', arguments: {
-                            'courseId': controller.course!.id!,
-                          });
-                        })
-                      ],
-                    ),
-                    postItem(),
-                    postItem(),
-                    postItem(),
-                    postItem(),
-                    SizedBox(height:10),
-                  ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
+
+                      Container(
+                        margin: const EdgeInsets.all(normal_padding),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              children: [
+                                Container(
+                                  child: Icon(
+                                    Icons.category,
+                                    size: 20,
+                                    color: Colors.grey,
+                                  ),
+                                  margin: EdgeInsets.only(right: 10),
+                                ),
+
+                                Text('Course Overview > ',
+                                    style: GoogleFonts.poppins().copyWith(
+                                        fontSize: SUB_TITLE,
+                                        color: Colors.grey,
+                                        fontWeight: FontWeight.w500)),
+                              ],
+                            ),
+
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Text(controller.course!.courseOverview!, style: GoogleFonts.poppins().copyWith(
+                                fontSize: SUB_TITLE,
+                              ),),
+                            ),
+
+                          ],
+                        ),
+                      ),
+                      SizedBox(height: 10),
+
+                      Divider(
+                        color: Colors.grey[100],
+                        height: 10,
+                        thickness: 10,
+                      ),
+
+                      //POST
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                        children: [
+                          Container(
+                            margin: const EdgeInsets.only(left: large_padding, top: large_padding),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Row(
+                                  children: [
+                                    Container(
+                                      child: Icon(
+                                        Icons.category,
+                                        size: 20,
+                                        color: Colors.grey,
+                                      ),
+                                      margin: EdgeInsets.only(right: 10),
+                                    ),
+
+                                    Text('Course Feed > ',
+                                        style: GoogleFonts.poppins().copyWith(
+                                            fontSize: SUB_TITLE,
+                                            color: Colors.grey,
+                                            fontWeight: FontWeight.w500)),
+                                  ],
+                                ),
+                              ],
+                            ),
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(right: large_padding, top: large_padding),
+                            padding: const EdgeInsets.only(left: normal_padding, right: normal_padding, top: small_padding, bottom: small_padding),
+                            decoration: BoxDecoration(
+                              borderRadius: BorderRadius.all(Radius.circular(5.0)),
+                              color: BG_COLOR_4.withOpacity(0.2),
+                            ),
+                            child: Icon(Icons.add, size: 18,),
+                          ).onTap((){
+                            Navigator.of(context).pushNamed('/AddPostScreen', arguments: {
+                              'courseId': controller.course!.id!,
+                            });
+                          })
+                        ],
+                      ),
+
+                      ListView.builder(
+                        shrinkWrap: true,
+                        physics: const NeverScrollableScrollPhysics(),
+                        itemCount: controller.postList.length,
+                        itemBuilder: (context, index) {
+                          return postItem(context, controller.postList[index], controller, () {
+                            setState(() {});
+                          }, controller.postLikes[controller.postList[index].id]!);
+                        }
+                      ),
+                      SizedBox(height:10),
+                    ],
+                  ),
                 ),
               ),
             ),

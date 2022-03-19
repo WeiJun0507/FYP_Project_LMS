@@ -7,6 +7,7 @@ import 'package:firebase_storage/firebase_storage.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/dialog.dart';
+import 'package:fyp_lms/web_service/model/post/post.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -17,6 +18,8 @@ import '../../web_service/model/course/course.dart';
 
 
 class CourseDetailController {
+  //'==========================================VARIABLES=================================================='
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -26,11 +29,11 @@ class CourseDetailController {
   int? accountType;
   Account? user;
 
-  bool isLoading = false;
+  bool isLoading = false, fetchPostIsLoading = false;
 
   Course? course;
 
-  List<String> courseColorSelection = [
+  List<String> colorSelection = [
     'Yellow',
     'Orange',
     'Red',
@@ -43,7 +46,7 @@ class CourseDetailController {
     'Teal',
   ];
 
-  List<Color> courseColorSelectionColor = [
+  List<Color> colorSelectionColor = [
     Colors.yellow[300]!,
     Colors.orange[300]!,
     Colors.red[300]!,
@@ -57,6 +60,51 @@ class CourseDetailController {
   ];
 
   List attachmentList = List.empty(growable: true);
+  List<Post> postList = List.empty(growable: true);
+  Map<String, bool> postLikes = {};
+
+  //'==========================================METHODS=================================================='
+
+  refreshCourse(BuildContext context) async {
+    isLoading = true;
+    print('======================================BEGIN FETCH COURSE==================================================');
+    DocumentSnapshot snapshot = await _db.collection('Course').doc(course!.id).get();
+    print('======================================STOP FETCH COURSE==================================================');
+    //print('= ${snapshot.data()} =');
+    print('======================================COURSE DATA==================================================');
+
+    Course courseRefresh = Course.fromJson(snapshot.data() as Map<String, dynamic>);
+    course = courseRefresh;
+  }
+
+  fetchPost(BuildContext context, VoidCallback onCallback) async {
+    postList.clear();
+    print('======================================BEGIN FETCH POST==================================================');
+    print('======================================QUERY PARAMETER===================================================');
+    print('= QUERY PARAM: ${course!.id} =');
+    QuerySnapshot snapshot = await _db.collection('post')
+        .where('courseBelonging', isEqualTo: course!.id.toString())
+        .get();
+    print('======================================END FETCH POST==================================================');
+    print('= ${snapshot.docs} =');
+    print('======================================POST DATA ==================================================');
+
+
+    if (snapshot.docs.isNotEmpty) {
+      snapshot.docs.forEach((QueryDocumentSnapshot document) async {
+        Post post = Post.fromJson(document.data() as Map<String, dynamic>);
+        postList.add(post);
+        await _db.collection('post').doc(post.id).collection(user!.id.toString()).get().then((QuerySnapshot value) {
+          if (value.docs.isNotEmpty) {
+            postLikes[post.id!] = true;
+          } else {
+            postLikes[post.id!] = false;
+          }
+        });
+        onCallback();
+      });
+    }
+  }
 
   uploadFile(BuildContext context, PlatformFile file) async {
     showLoading(context);
@@ -116,6 +164,58 @@ class CourseDetailController {
         }
       );
     });
+  }
+
+  Future<bool> addLikes(String postId, String likeBy, int likeCount, VoidCallback onCallback) async {
+    if (postLikes[postId]!) {
+      int index = postList.indexWhere((element) => element.id == postId);
+      postList[index].likes = postList[index].likes! - 1;
+      postLikes[postId] = false;
+      onCallback();
+    } else {
+      int index = postList.indexWhere((element) => element.id == postId);
+      postList[index].likes = postList[index].likes! + 1;
+      postLikes[postId] = true;
+      onCallback();
+    }
+
+    if (postLikes[postId]!) {
+      print('======================================BEGIN DISLIKE POST==================================================');
+      await _db.collection('post').doc(postId).update({
+        'likes': likeCount--
+      }).then((_) async {
+        print('======================================BEGIN REMOVE POST LIKES COLLECTION==================================================');
+        await _db.collection('post').doc(postId).collection(likeBy).where('likeBy', isEqualTo: likeBy).get().then((snapshot) {
+          print('======================================DELETING POST LIKES COLLECTION==================================================');
+          snapshot.docs.forEach((document) async {
+            await document.reference.delete();
+          });
+          print('======================================DELETE SUCCESSFUL ==================================================');
+          return true;
+        }, onError: (e) => false);
+        print('======================================STOP REMOVE POST LIKES COLLECTION==================================================');
+      }, onError: (e) => false);
+      return true;
+    } else {
+      print('======================================BEGIN ADD POST LIKES==================================================');
+
+      await _db.collection('post').doc(postId).update({
+        'likes': likeCount++
+      }).then((_) {
+        print('======================================BEGIN ADD POST LIKES COLLECTION==================================================');
+        _db.collection('post').doc(postId).collection(likeBy).doc(likeBy).set({
+          'likeBy': likeBy,
+          'createdAt': DateUtil().getDatetimeFormatServer().format(DateTime.now()),
+        }).then((__) {
+          print('======================================LIKE POST COLLECTION CREATED==================================================');
+          return true;
+        }, onError: (e) => false);
+      }, onError: (e) => false);
+      print('======================================STOP ADD POST LIKES COLLECTION==================================================');
+
+      return true;
+    }
+
   }
 
 }

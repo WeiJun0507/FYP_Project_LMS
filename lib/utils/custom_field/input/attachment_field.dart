@@ -18,6 +18,7 @@ Widget attachmentField(
     dynamic controller,
     String? label,
     List<String> attachmentItem,
+    List<String> attachmentsFull,
     VoidCallback onChanged,
     {Key? key, IconData? fieldIcon, bool editable = true}) {
 
@@ -80,7 +81,8 @@ Widget attachmentField(
 
                 if (pickResult != null) {
                   pickResult.files.forEach((file) {
-                    attachmentList.add(file.path!);
+                    attachmentsFull.add(file.path!);
+                    attachmentList.add(file.name);
                     onChanged();
                   });
                 }
@@ -89,7 +91,7 @@ Widget attachmentField(
         ),
       ),
 
-      getDisplayWidget(controller.attachments, controller, editable, onChanged),
+      getDisplayWidget(controller.attachmentsFull, controller, editable, onChanged),
       Container(height: 10,color: Colors.white,)
 
     ],
@@ -110,6 +112,7 @@ Widget getDisplayWidget(List<String> attachmentList, dynamic controller, editabl
         itemBuilder: (context, index) {
 
           String? path = attachmentList[index];
+          String? path2 = controller.attachments[index];
 
           //RENDER DOC VIEW
           return path.isDoc || path.isExcel || path.isPdf || path.isPPT || path.isTxt || p.extension(path) == '.csv' ?
@@ -120,6 +123,7 @@ Widget getDisplayWidget(List<String> attachmentList, dynamic controller, editabl
             }
 
             attachmentList.remove(path);
+            controller.attachments.remove(path2);
             onChanged();
           }).onTap(() async {
             OpenFile.open(path);
@@ -132,6 +136,7 @@ Widget getDisplayWidget(List<String> attachmentList, dynamic controller, editabl
               return;
             }
             attachmentList.remove(path);
+            controller.attachments.remove(path2);
             onChanged();
 
           }, size: 70.0, space: 6);
