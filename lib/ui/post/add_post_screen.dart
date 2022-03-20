@@ -1,15 +1,14 @@
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:fyp_lms/controller/post/add_post_controller.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/custom_field/input/attachment_field.dart';
-import 'package:fyp_lms/utils/custom_field/input/datetime_field.dart';
 import 'package:fyp_lms/utils/custom_field/input/dropdown_field.dart';
-import 'package:fyp_lms/utils/custom_field/input/number_input_field.dart';
-import 'package:fyp_lms/utils/custom_field/input/text_input_field.dart';
 import 'package:fyp_lms/utils/custom_field/input/textarea_input_field.dart';
-import 'package:fyp_lms/utils/custom_field/input/time_range_field.dart';
 import 'package:fyp_lms/utils/custom_picker/dropdown_picker.dart';
 import 'package:fyp_lms/utils/date_util.dart';
+import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
 
@@ -47,10 +46,11 @@ class _AddPostScreenState extends State<AddPostScreen> {
     });
   }
 
-  initializeData() {
+  initializeData() async {
     controller.createdBy = _sPref!.getString('account');
     controller.createdByName = _sPref!.getString('username');
     controller.accountType = _sPref!.getInt('accountType');
+    controller.user = Account.fromJson(json.decode(_sPref!.getString('accountInfo')!) as Map<String, dynamic>);
     controller.createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
     controller.lastUpdate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
 
@@ -69,6 +69,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
       setState(() {
         controller.courseBelonging = arguments['courseId'];
       });
+    } else {
+      await controller.fetchCourse(() { setState(() {});});
     }
     //TODO: IF COURSE ID IS NULL LET USER CHOOSE THE COURSE
 
@@ -310,15 +312,26 @@ class _AddPostScreenState extends State<AddPostScreen> {
                     ),
                     SizedBox(width: 10),
                     Expanded(
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Text(controller.courseBelonging ?? 'Empty', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins().copyWith(
-                              fontSize: SUB_TITLE,
-                              fontWeight: FontWeight.w600,
-                            ),),
-                          ],
-                        )
+                        child: controller.isLoading ? Center(child: CircularProgressIndicator(color: BG_COLOR_4)) : Container(
+                          child: Text(controller.courseBelonging ?? 'Empty', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins().copyWith(
+                            fontSize: SUB_TITLE,
+                            fontWeight: FontWeight.w600,
+                          ),),
+                        ).onTap(() {
+                          List<String> courseCode = controller.courseList.map((e) => e.id!).toList();
+
+                          showDialog(
+                              barrierDismissible: true,
+                              context: context,
+                              builder: (BuildContext ctx) => DropdownPicker(courseCode, 'Course Selection')
+                          ).then((newValue) {
+                            if (newValue != null && newValue is int) {
+                              setState(() {
+                                controller.courseBelonging = controller.courseList[newValue].id;
+                              });
+                            }
+                          });
+                        }),
                     ),
                   ],
                 ),

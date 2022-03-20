@@ -44,16 +44,17 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
                           padding: EdgeInsets.only(left: 10),
                           child: Text('Add Course Material',
                               style: TextStyle(
-                                  fontSize: 13,
-                                  fontWeight: FontWeight.w600
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.greenAccent,
                               ))
                       ),
                       Container(
                           padding: EdgeInsets.only(left: 10),
                           child: Text('Upload Course Material',
                               style: TextStyle(
-                                  fontSize: 11,
-                                  color: Colors.grey
+                                fontSize: 11,
+                                color: Colors.greenAccent,
                               ))
                       ),
                     ],
@@ -82,7 +83,7 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
               child: Row(
                 children: [
                   Icon(
-                    Icons.check,
+                    Icons.feed,
                     color: Colors.grey,
                   ),
                   Column(
@@ -151,6 +152,48 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
             ).onTap((){
               Navigator.of(context).pop(2);
             }),
+            Divider(
+              height: 1,
+              indent: 10,
+              endIndent: 10,
+            ),
+
+            Container(
+              padding: EdgeInsets.only(top: 13, bottom: 10, left: 10),
+              child: Row(
+                children: [
+                  Icon(
+                    Icons.delete,
+                    color: Colors.redAccent,
+                  ),
+                  Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Container(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text('Delete',
+                              style: TextStyle(
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.redAccent,
+                              ))
+                      ),
+                      Container(
+                          padding: EdgeInsets.only(left: 10),
+                          child: Text('Delete this course.',
+                              style: TextStyle(
+                                fontSize: 11,
+                                color: Colors.redAccent,
+                              ),)
+                      ),
+                    ],
+                  )
+                ],
+              ),
+            ).onTap(() {
+              Navigator.of(context).pop(3);
+            }),
+
             Divider(
               height: 1,
               indent: 10,

@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -76,6 +78,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
       _sPref.setString('account', createdUser.id.toString());
       _sPref.setString('username', createdUser.displayName!);
       _sPref.setInt('accountType', 1);
+      _sPref.setString('accountInfo', json.encode(createdUser));
       _sPref.setBool('verified', _auth.currentUser!.emailVerified);
 
       Navigator.of(context).pushReplacementNamed('/SplashScreen');

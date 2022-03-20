@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_lms/web_service/model/course/course.dart';
 import 'package:fyp_lms/web_service/model/post/post.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
 
@@ -15,6 +16,8 @@ class PostDetailController {
   Account? user;
 
   Post? post;
+
+  Course? course;
 
   bool isLoading = false, isLiked = false;
 
@@ -44,6 +47,8 @@ class PostDetailController {
     Colors.teal[300]!,
   ];
 
-
   //====================================METHODS===================================
+
+
+
 }

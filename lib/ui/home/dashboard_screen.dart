@@ -6,7 +6,6 @@ import 'package:nb_utils/nb_utils.dart';
 
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../controller/dashboard/dashboard_controller.dart';
 import 'package:fyp_lms/ui/dashboard/upcoming_event_widget.dart';
@@ -92,29 +91,32 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
-                    Container(
-                      margin: const EdgeInsets.only(top: x_large_padding, bottom: x_large_padding, right: large_padding, left: x_large_padding),
-                      child: RichText(
-                        text: TextSpan(
-                          text: 'WELCOME, ',
-                          style: GoogleFonts.poppins().copyWith(
-                            fontSize: TITLE,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.black,
-                          ),
-                          children: [
-                            TextSpan(
-                              text: controller.user!.displayName!.toUpperCase(),
-                              style: GoogleFonts.poppins().copyWith(
-                                fontSize: BIG_TITLE,
-                                fontWeight: FontWeight.bold,
-                                letterSpacing: -1,
-                                color: Colors.black,
+                    Expanded(
+                      child: Container(
+                        margin: const EdgeInsets.only(top: x_large_padding, bottom: x_large_padding, right: large_padding, left: x_large_padding),
+                        child: RichText(
+                          text: TextSpan(
+                            text: 'WELCOME, ',
+                            style: GoogleFonts.poppins().copyWith(
+                              fontSize: TITLE,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.black,
+                            ),
+                            children: [
+                              TextSpan(
+                                text: controller.user!.displayName!.toUpperCase(),
+                                style: GoogleFonts.poppins().copyWith(
+                                  fontSize: BIG_TITLE,
+                                  fontWeight: FontWeight.bold,
+                                  letterSpacing: -1,
+                                  color: Colors.black,
+                                ),
                               )
-                            )
-                          ]
+                            ]
+                          ),
+                          softWrap: true,
+                          overflow: TextOverflow.ellipsis,
                         ),
-                        softWrap: true,
                       ),
                     ),
                     Container(
@@ -176,10 +178,14 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         color: BG_COLOR_4.withOpacity(0.2),
                       ),
-                      child: Icon(Icons.add, size: 18,).onTap(() {
-                        Navigator.of(context).pushNamed('/AddPostScreen', arguments: {});
-                      }),
-                    )
+                      child: Icon(Icons.add, size: 18,),
+                    ).onTap(() {
+                      Navigator.of(context).pushNamed('/AddPostScreen', arguments: {}).then((value) {
+                        controller.initRefresh(context, () {
+                          setState(() {});
+                        });
+                      });
+                    })
                   ],
                 ),
               ),

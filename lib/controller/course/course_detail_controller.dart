@@ -75,6 +75,19 @@ class CourseDetailController {
 
     Course courseRefresh = Course.fromJson(snapshot.data() as Map<String, dynamic>);
     course = courseRefresh;
+    return true;
+  }
+
+  fetchCourse(BuildContext context, VoidCallback onCallback, String courseId) async {
+    print('======================================BEGIN FETCH COURSE==================================================');
+    DocumentSnapshot snapshot = await _db.collection('Course').doc(courseId).get();
+    print('======================================STOP FETCH COURSE==================================================');
+    //print('= ${snapshot.data()} =');
+    print('======================================COURSE DATA==================================================');
+
+    Course courseRefresh = Course.fromJson(snapshot.data() as Map<String, dynamic>);
+    course = courseRefresh;
+    return true;
   }
 
   fetchPost(BuildContext context, VoidCallback onCallback) async {
@@ -215,6 +228,51 @@ class CourseDetailController {
 
       return true;
     }
+
+  }
+
+  deleteCourse(BuildContext context) async {
+    showLoading(context);
+
+    //DELETE COURSE
+    await _db.collection('Course').doc(course!.id).delete();
+    for (int i = 0; i < 4; i++) {
+      QuerySnapshot courseSnapshot = await _db.collection('Course').doc(course!.id).collection('${DateUtil().getDateFormatServer().format(DateTime.parse(course!.createdAt!).add(Duration(days: 7 * i)))}_${course!.id}').get();
+      for (var doc in courseSnapshot.docs) {
+        doc.reference.delete();
+      }
+    }
+
+
+    //DELETE RECORD IN EVERY ACCOUNT
+    QuerySnapshot accountSnapshot = await _db.collection('account').get();
+    for (var doc in accountSnapshot.docs) {
+      Account account = Account.fromJson(doc.data() as Map<String,dynamic>);
+      if (account.accountType == 1) {
+        if (account.courseTaken != null && account.courseTaken!.isNotEmpty) {
+          List<String> newCourseTaken = account.courseTaken!.where((e) => e != course!.id).toList();
+          account.courseTaken = newCourseTaken;
+          _db.collection('account').doc(account.id).set(account.toJson());
+        }
+      } else {
+        if (account.courseAssigned != null && account.courseAssigned!.isNotEmpty) {
+          List<String> newCourseAssigned = account.courseAssigned!.where((e) => e != course!.id).toList();
+          account.courseTaken = newCourseAssigned;
+          _db.collection('account').doc(account.id).set(account.toJson());
+        }
+      }
+    }
+
+    //DELETE RESPECTIVE POST
+    QuerySnapshot postSnapshot = await _db.collection('post').where('courseBelonging', isEqualTo: course!.id).get();
+    for (var doc in postSnapshot.docs) {
+      doc.reference.delete();
+    }
+
+    Navigator.of(context).pop();
+    showSuccessDialog(context, 'Delete Success', 'Course is Removed successfully', () {
+      Navigator.of(context).pop();
+    });
 
   }
 

@@ -25,9 +25,6 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   @override
   void initState() {
     super.initState();
-    setState(() {
-      controller.isLoading = true;
-    });
     SharedPreferences.getInstance().then((value) {
       setState(() {
         _sPref = value;
@@ -38,6 +35,8 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
   }
 
   initializeData() async {
+    controller.isLoading = true;
+
     //_sPref.setString('accountInfo', jsonEncode(createdUser));
     controller.accountId = _sPref!.getString('account');
     controller.accountName = _sPref!.getString('username');
@@ -52,9 +51,18 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
           fetchPosts();
         });
       }
+      if (arguments['courseId'] != null) {
+        fetchCourse(arguments['courseId']);
+      }
     });
+  }
+
+  fetchCourse(String courseId) async {
     setState(() {
-      controller.isLoading = false;
+      controller.isLoading = true;
+    });
+    await controller.fetchCourse(context, () {setState(() {});}, courseId).then((_) async {
+      await fetchPosts();
     });
   }
 
@@ -124,11 +132,18 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                     case 1:
                                       //BROWSE COURSE MATERIAL
                                       break;
+
                                     case 2:
                                       //EDIT COURSE
                                       Navigator.of(context).pushNamed('/AddCourseScreen', arguments: {
                                         'course': controller.course,
                                       });
+                                      break;
+
+                                    case 3:
+                                      //DELETE COURSE
+                                      Navigator.of(context).pop();
+                                      controller.deleteCourse(context);
                                       break;
                                     default:
                                       break;
@@ -505,7 +520,12 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                         itemBuilder: (context, index) {
                           return postItem(context, controller.postList[index], controller, () {
                             setState(() {});
-                          }, controller.postLikes[controller.postList[index].id]!);
+                          }, controller.postLikes[controller.postList[index].id]!).onTap(() {
+                            Navigator.of(context).pushNamed('/PostDetailScreen', arguments: {
+                              'post': controller.postList[index],
+                              'isLiked': controller.postLikes[controller.postList[index].id],
+                            });
+                          });
                         }
                       ),
                       SizedBox(height:10),

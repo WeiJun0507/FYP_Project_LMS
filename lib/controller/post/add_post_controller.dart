@@ -1,17 +1,19 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:file_picker/file_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:fyp_lms/utils/date_util.dart';
 import 'package:fyp_lms/utils/dialog.dart';
+import 'package:fyp_lms/web_service/model/course/course.dart';
 import 'package:fyp_lms/web_service/model/post/post.dart';
+import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 import '../../web_service/model/course_material/course_material.dart';
 
 class AddPostController {
+  //=====================================================VARIABLES==================================================
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
 
@@ -60,8 +62,9 @@ class AddPostController {
   /*  Number of Comments Count  */
   int? commentsCount;
 
+  Account? user;
 
-  bool isEdit = false;
+  bool isEdit = false, isLoading = false;
 
   List<String> postTypeSelection = [
     'General',
@@ -95,6 +98,7 @@ class AddPostController {
     Colors.teal[300]!,
   ];
 
+  List<Course> courseList = List.empty(growable: true);
 
   // populateData(Post post) {
   //   id = post.id;
@@ -112,11 +116,89 @@ class AddPostController {
   //   commentsCount = post.commentsCount;
   // }
 
+  //==================================================METHODS===================================================
+
+  fetchCourse(VoidCallback onCallback) async {
+    isLoading = true;
+    onCallback();
+
+    print(
+        '======================================BEGIN FETCH ACCOUNT===========================================');
+    //GET ACCOUNT COURSE ASSIGNED
+    DocumentSnapshot account = await _db.collection('account')
+        .doc(user!.id)
+        .get();
+
+    print(
+        '======================================STOP FETCH ACCOUNT===========================================');
+    //print('= ${account.data()} =');
+    print(
+        '======================================ACCOUNT DATA===================================================');
+
+    user = Account.fromJson(account.data() as Map<String, dynamic>);
+
+
+    if (accountType == 1) {
+      //GET ACCOUNT COURSE TAKEN
+      List<String>? courseTaken = user!.courseTaken;
+      courseList.clear();
+
+      if (courseTaken != null) {
+        for (var courseCode in courseTaken) {
+          print(
+              '======================================BEGIN FETCH COURSE LIST===========================================');
+          DocumentSnapshot snapshot = await _db.collection('Course').doc(courseCode).get();
+
+          print(
+              '======================================END FETCH COURSE LIST===========================================');
+          //print('= ${snapshot.data()} =');
+          print(
+              '======================================COURSE DATA===========================================');
+
+          if (snapshot.data() != null) {
+            courseList.add(Course.fromJson((snapshot.data() as Map<String, dynamic>)));
+          }
+          onCallback();
+        }
+      }
+
+      isLoading = false;
+      onCallback();
+    } else {
+      List<String>? courseAssigned = user!.courseAssigned;
+      courseList.clear();
+
+      if (courseAssigned != null) {
+        for (var courseCode in courseAssigned) {
+          print(
+              '======================================BEGIN FETCH COURSE LIST===========================================');
+          DocumentSnapshot snapshot =
+          await _db.collection('Course').doc(courseCode).get();
+
+          print(
+              '======================================END FETCH COURSE LIST===========================================');
+          //print('= ${snapshot.data()} =');
+          print(
+              '======================================COURSE DATA===========================================');
+
+          if (snapshot.data() != null) {
+            courseList.add(Course.fromJson((snapshot.data() as Map<String, dynamic>)));
+          }
+          onCallback();
+        }
+      }
+      isLoading = false;
+      onCallback();
+    }
+
+    courseBelonging = courseList[0].id;
+  }
+
   compileData(
-      BuildContext context,
-      String title,
-      String notes,
-      ) async {
+    BuildContext context,
+    String title,
+    String notes,
+  ) async {
     //CONVERT COLOR INTO STRING
     String? errorMessage;
     if (title.isEmpty) {
@@ -138,7 +220,8 @@ class AddPostController {
     data.id = '${courseBelonging}_$createdDate';
     data.title = title;
     data.type = type;
-    data.typeColor = postColorSelection[postColorSelectionColor.indexOf(typeColor!)];
+    data.typeColor =
+        postColorSelection[postColorSelectionColor.indexOf(typeColor!)];
     data.createdDate = createdDate;
     data.lastUpdate = lastUpdate;
     data.createdBy = createdBy;
@@ -150,38 +233,60 @@ class AddPostController {
     data.likes = 0;
     data.commentsCount = 0;
 
-    _db.collection('post').doc('${courseBelonging}_$createdDate').set(data.toJson()).then((_) async {
+    print('=========================================ADD POST TO COLLECTION=================================================');
+    _db
+        .collection('post')
+        .doc('${courseBelonging}_$createdDate')
+        .set(data.toJson())
+        .then((_) async {
       List uploadedAttachment = List.empty(growable: true);
-      int index = 0;
-      for (var attachment in attachments!) {
-        //UPLOAD FILE
-        final uploaded = await uploadFile(context, File(attachments![index]), index);
-        index++;
 
-        //REPLACE ATTACHMENTS DATA INSIDE POST COLLECTION
-        uploadedAttachment.add(uploaded);
+      if (attachments != null && attachments!.isNotEmpty) {
+        int index = 0;
+        for (var attachment in attachments!) {
+          //UPLOAD FILE
+          final uploaded =
+          await uploadFile(context, File(attachments![index]), index);
+          index++;
+
+          //REPLACE ATTACHMENTS DATA INSIDE POST COLLECTION
+          uploadedAttachment.add(uploaded);
+        }
       }
 
       if (uploadedAttachment.isNotEmpty) {
-        await _db.collection('post').doc('${courseBelonging}_$createdDate').update({
+        print('==================================================UPDATE POST DOCUMENT FIELD======================================');
+        await _db
+            .collection('post')
+            .doc('${courseBelonging}_$createdDate')
+            .update({
           'attachments': uploadedAttachment,
         }).then((_) {
           Navigator.of(context).pop();
-          showSuccessDialog(context, 'Success', 'Post Created Successfully', () {
+          showSuccessDialog(context, 'Success', 'Post Created Successfully',
+              () {
             Navigator.of(context).pop();
-
           });
         });
+      } else {
+        Navigator.of(context).pop();
+        showSuccessDialog(context, 'Success', 'Post Created Successfully',
+                () {
+              Navigator.of(context).pop();
+            });
       }
     }, onError: (e) {
       print(e.toString());
       showInfoDialog(context, null, e.toString());
     });
-
   }
 
   uploadFile(BuildContext context, File file, int index) async {
-    final TaskSnapshot uploadedFile = await _storage.ref().child('${courseBelonging}_${createdDate}_${file.path}').putFile(File(attachmentsFull![index]));
+    print('=========================================PUTTING FILE INTO FIRECLOUD============================================');
+    final TaskSnapshot uploadedFile = await _storage
+        .ref()
+        .child('${courseBelonging}_${createdDate}_${file.path}')
+        .putFile(File(attachmentsFull![index]));
     final downloadLink = await uploadedFile.ref.getDownloadURL();
 
     CourseMaterial courseMaterial = CourseMaterial();
@@ -189,25 +294,26 @@ class AddPostController {
     courseMaterial.materialName = file.path;
     courseMaterial.id = '${courseBelonging}_${createdDate}_${file.path}';
     courseMaterial.courseBelonging = courseBelonging;
-    courseMaterial.createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
-    courseMaterial.fileSize = File(attachmentsFull![index]).readAsBytesSync().length.toString();
-    courseMaterial.materialType = file.path.isVideo ? 'video' : file.path.isImage ? 'image' : 'document';
+    courseMaterial.createdDate =
+        DateUtil().getDatetimeFormatServer().format(DateTime.now());
+    courseMaterial.fileSize =
+        File(attachmentsFull![index]).readAsBytesSync().length.toString();
+    courseMaterial.materialType = file.path.isVideo
+        ? 'video'
+        : file.path.isImage
+            ? 'image'
+            : 'document';
     courseMaterial.submittedBy = createdBy;
-
-    _db.collection('post_material')
+    print('===============================================ADD POST MATERIAL===================================================');
+    _db
+        .collection('post_material')
         .doc('${courseBelonging}_$createdDate')
         .collection('${courseBelonging}_$createdDate')
         .doc('${courseBelonging}_${createdDate}_${file.path}')
-        .set(courseMaterial.toJson()).then((_) {},
-        onError: (e) {
-          Navigator.of(context).pop();
-          showInfoDialog(context, null, e.toString(), callback: () {
-            Navigator.of(context).pop();
-          });
-        }
-    );
+        .set(courseMaterial.toJson())
+        .then((_) {}, onError: (e) {
+      Navigator.of(context).pop();
+    });
     return downloadLink;
   }
-
-
 }
