@@ -54,9 +54,9 @@ class CourseListingController {
 
   //==================================================METHODS======================================================
 
-  fetchCurrentCourse(Function setState) async {
+  fetchCurrentCourse(VoidCallback onCallback) async {
     isLoading = true;
-    setState(() {});
+    onCallback();
 
     print('======================================BEGIN FETCH ACCOUNT===========================================');
     //GET ACCOUNT COURSE ASSIGNED
@@ -88,12 +88,12 @@ class CourseListingController {
           } else if (snapshot.data() != null && (snapshot.data() as Map<String,dynamic>)['isHide']) {
             hideCourseList.add(Course.fromJson((snapshot.data() as Map<String,dynamic>)));
           }
-          setState(() {});
+          onCallback();
         });
       }
 
       isLoading = false;
-      setState(() {});
+      onCallback();
     } else {
       List<String>? courseAssigned;
       if (account.data() != null) {
@@ -115,11 +115,11 @@ class CourseListingController {
           } else {
             hideCourseList.add(Course.fromJson((snapshot.data() as Map<String,dynamic>)));
           }
-          setState(() {});
+          onCallback();
         });
       }
       isLoading = false;
-      setState(() {});
+      onCallback();
     }
 
   }

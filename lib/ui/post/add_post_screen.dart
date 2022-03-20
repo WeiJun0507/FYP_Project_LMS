@@ -50,6 +50,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
   initializeData() {
     controller.createdBy = _sPref!.getString('account');
     controller.createdByName = _sPref!.getString('username');
+    controller.accountType = _sPref!.getInt('accountType');
     controller.createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
     controller.lastUpdate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
 
@@ -69,6 +70,8 @@ class _AddPostScreenState extends State<AddPostScreen> {
         controller.courseBelonging = arguments['courseId'];
       });
     }
+    //TODO: IF COURSE ID IS NULL LET USER CHOOSE THE COURSE
+
     // if (arguments['post'] != null) {
     //   setState(() {
     //     controller.isEdit = true;
@@ -293,6 +296,33 @@ class _AddPostScreenState extends State<AddPostScreen> {
                   )
               ),
               const SizedBox(height: 7),
+
+              //COURSE SELECTED
+              Container(
+                color: Colors.white,
+                padding: EdgeInsets.only(top: 12, left: 14, bottom: 12, right: 12),
+                child: Row(
+                  children: [
+                    Icon(
+                      Icons.book,
+                      size: 22,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(width: 10),
+                    Expanded(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(controller.courseBelonging ?? 'Empty', overflow: TextOverflow.ellipsis, style: GoogleFonts.poppins().copyWith(
+                              fontSize: SUB_TITLE,
+                              fontWeight: FontWeight.w600,
+                            ),),
+                          ],
+                        )
+                    ),
+                  ],
+                ),
+              ),
 
               //ASSIGNED_TO
               Container(

@@ -106,7 +106,9 @@ Widget courseListingBS(BuildContext context, CourseListingController controller,
               ).onTap(() {
                 Navigator.of(context).pop();
                 controller.joinCourse(context, controller.addCourseCode.text).then((_) {
-                  controller.fetchCurrentCourse(setState);
+                  controller.fetchCurrentCourse(() {
+                    setState(() {});
+                  });
                 }, onError: (e) {
                   print(e.toString());
                   if (e == 'elementExists') {

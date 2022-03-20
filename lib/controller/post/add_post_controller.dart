@@ -38,6 +38,9 @@ class AddPostController {
   /*  Post createdBy  */
   String? createdByName;
 
+  /*  User AccountType  */
+  int? accountType;
+
   /*  Post courseBelonging  */
   String? courseBelonging;
 

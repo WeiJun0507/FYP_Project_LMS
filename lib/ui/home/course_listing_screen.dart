@@ -44,7 +44,9 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
     controller.accountType = _sPref!.getInt('accountType');
 
-    controller.fetchCurrentCourse(setState);
+    controller.fetchCurrentCourse(() {
+      setState(() {});
+    });
   }
 
   @override
@@ -56,7 +58,9 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
         toolbarHeight: 0,
       ),
       body: RefreshIndicator(
-        onRefresh: () => controller.fetchCurrentCourse(setState),
+        onRefresh: () => controller.fetchCurrentCourse(() {
+          setState(() {});
+        }),
         displacement: 60.0,
         child: SingleChildScrollView(
           physics: AlwaysScrollableScrollPhysics(),

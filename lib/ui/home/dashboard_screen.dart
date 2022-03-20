@@ -176,7 +176,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(5.0)),
                         color: BG_COLOR_4.withOpacity(0.2),
                       ),
-                      child: Icon(Icons.add, size: 18,),
+                      child: Icon(Icons.add, size: 18,).onTap(() {
+                        Navigator.of(context).pushNamed('/AddPostScreen', arguments: {});
+                      }),
                     )
                   ],
                 ),
@@ -197,6 +199,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     //ENTER POST DETAIL PAGE
                     Navigator.of(context).pushNamed('/PostDetailScreen', arguments: {
                       'post': controller.postList[index],
+                      'isLiked': controller.postLikes[controller.postList[index].id],
                     });
                   });
                 },

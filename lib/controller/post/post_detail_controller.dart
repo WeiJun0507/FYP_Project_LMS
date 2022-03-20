@@ -16,7 +16,7 @@ class PostDetailController {
 
   Post? post;
 
-  bool isLoading = false;
+  bool isLoading = false, isLiked = false;
 
   List<String> colorSelection = [
     'Yellow',
