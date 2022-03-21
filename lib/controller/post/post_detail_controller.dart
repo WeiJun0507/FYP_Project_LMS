@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_lms/utils/dialog.dart';
 import 'package:fyp_lms/web_service/model/course/course.dart';
 import 'package:fyp_lms/web_service/model/post/post.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
@@ -49,6 +50,23 @@ class PostDetailController {
 
   //====================================METHODS===================================
 
+  deletePost(BuildContext context, Post post) async {
+    showLoading(context);
 
+    //DELETE POST
+    await _db.collection('post').doc(post.id).delete();
+
+
+    //DELETE POST MATERIAL
+    QuerySnapshot postMaterialSnapshot = await _db.collection('post_material').doc(post.id).collection(post.id!).get();
+    for (var postMaterial in postMaterialSnapshot.docs) {
+      postMaterial.reference.delete();
+    }
+
+    Navigator.of(context).pop();
+    showSuccessDialog(context, 'Delete Success', 'Post is Removed successfully', () {
+      Navigator.of(context).pop();
+    });
+  }
 
 }
