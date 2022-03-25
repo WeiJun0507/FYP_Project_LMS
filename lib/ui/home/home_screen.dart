@@ -105,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     icon: Column(
                       children: const [
                         Icon(
-                          Icons.home,
+                          Icons.collections,
                           color: COLOR_INVALID,
                         ),
                         SizedBox(height: small_padding),
@@ -114,7 +114,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     activeIcon: Column(
                       children: const [
                         Icon(
-                          Icons.home,
+                          Icons.collections,
                           color: BG_COLOR_4,
                         ),
                         SizedBox(height: small_padding),
@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     icon: Column(
                       children: const [
                         Icon(
-                          Icons.home,
+                          Icons.emoji_people,
                           color: COLOR_INVALID,
                         ),
                         SizedBox(height: small_padding),
@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     activeIcon: Column(
                       children: const [
                         Icon(
-                          Icons.home,
+                          Icons.emoji_people,
                           color: BG_COLOR_4,
                         ),
                         SizedBox(height: small_padding),

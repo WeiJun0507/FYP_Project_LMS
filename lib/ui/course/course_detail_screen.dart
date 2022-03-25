@@ -88,6 +88,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(controller.course!.id);
     return Scaffold(
       backgroundColor: Colors.white,
       body: Stack(
@@ -134,15 +135,20 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                       break;
 
                                     case 2:
-                                      //EDIT COURSE
+                                      //TODO: EDIT COURSE
                                       Navigator.of(context).pushNamed('/AddCourseScreen', arguments: {
                                         'course': controller.course,
+                                      }).then((value) {
+                                        if (value != null && (value as Map)['result'] == 200) {
+                                          controller.course!.id = value['newCourseId'];
+                                        }
+
+                                        controller.refreshCourse(context);
                                       });
                                       break;
 
                                     case 3:
                                       //DELETE COURSE
-                                      Navigator.of(context).pop();
                                       controller.deleteCourse(context);
                                       break;
                                     default:
@@ -289,7 +295,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                               children: [
                                 Container(
                                   child: Icon(
-                                    Icons.category,
+                                    Icons.announcement,
                                     size: 20,
                                     color: Colors.grey,
                                   ),
@@ -480,7 +486,7 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   children: [
                                     Container(
                                       child: Icon(
-                                        Icons.category,
+                                        Icons.article,
                                         size: 20,
                                         color: Colors.grey,
                                       ),

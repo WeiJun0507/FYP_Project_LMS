@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/custom_field/common/round_corner_document_view.dart';
 import 'package:fyp_lms/utils/custom_field/common/round_corner_image_view.dart';
+import 'package:fyp_lms/utils/general_utils.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as p;
@@ -43,36 +44,34 @@ Widget attachmentComment(
         padding: EdgeInsets.only(left: 14, right: 14),
         itemBuilder: (context, index) {
 
-          String? path = '';
-          if(attachmentList[index] is String){
-            path = attachmentList[index];
-          }else{
-
-            if((attachmentList[index] as List<dynamic>).length == 7){
-              path = (attachmentList[index] as List<dynamic>)[0];
-            }else if((attachmentList[index] as List<dynamic>).length == 8){
-              path = (attachmentList[index] as List<dynamic>)[1];
-            }else {
-              path = (attachmentList[index] as List<dynamic>).last;
-            }
+          String? path = attachmentList[index];
+          String? pathCopy = attachmentList[index];
+          int extensionIndex = path!.indexOf('?');
+          if (pathCopy!.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpg' &&
+              pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpeg' &&
+              pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'png') {
+            path = path.substring(0, extensionIndex);
           }
 
           //RENDER DOC VIEW
-          return path.isDoc || path.isExcel || path.isPdf || path.isPPT || path.isTxt || p.extension(path!) == '.csv' ?
-          roundCornerDocument(path!, (path) => null, size: 50.0, iconSize: 20.0, showDelete: false).onTap(() async {
+          return path.isDoc || path.isExcel || path.isPdf || path.isPPT || path.isTxt || p.extension(path) == '.csv' ?
+          roundCornerDocument(path, (path) => null, size: 50.0, iconSize: 20.0, showDelete: false).onTap(() async {
 
-            // if(path!.contains('http')){
-            //   LauncherUtil.openDocumentOnline(context,path);
-            //   //String encodedPath = Uri.encodeFull(path);
-            //   //await canLaunch(encodedPath) ? await launch(encodedPath) :  showInfoDialog(context,null,'Could not launch $path');
-            // }else {
-            //   OpenFile.open(path);
-            // }
+            if(path!.contains('http')){
+              GeneralUtil.openDocumentOnline(context,path);
+              //String encodedPath = Uri.encodeFull(path);
+              //await canLaunch(encodedPath) ? await launch(encodedPath) :  showInfoDialog(context,null,'Could not launch $path');
+            }else {
+              OpenFile.open(path);
+            }
 
           }) :
           //RENDER IMAGE VIEW
           roundCornerImage(path, (path) => null, size: 50.0, space: 6, showDelete: false).onTap(() {
-
+            Navigator.of(context).pushNamed('/ImagePreviewScreen', arguments: {
+              'attachments': attachmentList,
+              'currentIndex': index,
+            });
           });
         }),
   );

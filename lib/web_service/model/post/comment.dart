@@ -8,10 +8,13 @@ class Comment {
   String? commentCreated;
   String? createdDate;
   String? createdBy;
+  String? createdByName;
   String? lastUpdate;
   String? notes;
   String? postId;
   String? courseBelonging;
+
+  List<String>? attachments;
 
 
   Comment();

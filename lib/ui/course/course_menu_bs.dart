@@ -29,7 +29,7 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
               Icons.drag_handle,
               color: Colors.grey,
             ),
-            Container(
+            controller.accountType == 2 ? const SizedBox() : Container(
               padding: EdgeInsets.only(top: 13, bottom: 10, left: 10),
               child: Row(
                 children: [
@@ -72,7 +72,7 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
                 controller.uploadFile(context, pickResult.files[0]);
               }
             }),
-            Divider(
+            controller.accountType == 2 ? const SizedBox() : Divider(
               height: 1,
               indent: 10,
               endIndent: 10,
@@ -118,12 +118,12 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
               endIndent: 10,
             ),
 
-            Container(
+            controller.accountType == 2 ? const SizedBox() : Container(
               padding: EdgeInsets.only(top: 13, bottom: 10, left: 10),
               child: Row(
                 children: [
                   Icon(
-                    Icons.check,
+                    Icons.edit,
                     color: Colors.grey,
                   ),
                   Column(
@@ -152,13 +152,13 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
             ).onTap((){
               Navigator.of(context).pop(2);
             }),
-            Divider(
+            controller.accountType == 2 ? const SizedBox() : Divider(
               height: 1,
               indent: 10,
               endIndent: 10,
             ),
 
-            Container(
+            controller.accountType == 2 ? const SizedBox() : Container(
               padding: EdgeInsets.only(top: 13, bottom: 10, left: 10),
               child: Row(
                 children: [
@@ -194,7 +194,7 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
               Navigator.of(context).pop(3);
             }),
 
-            Divider(
+            controller.accountType == 2 ? const SizedBox() : Divider(
               height: 1,
               indent: 10,
               endIndent: 10,

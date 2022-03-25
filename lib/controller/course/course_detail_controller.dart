@@ -234,6 +234,7 @@ class CourseDetailController {
   deleteCourse(BuildContext context) async {
     showLoading(context);
 
+    //===============================================START DELETE THE COURSE===========================================================
     //DELETE COURSE
     await _db.collection('Course').doc(course!.id).delete();
     for (int i = 0; i < 4; i++) {

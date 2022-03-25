@@ -1,6 +1,9 @@
 import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:fyp_lms/utils/dialog.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class GeneralUtil {
 
@@ -37,6 +40,16 @@ class GeneralUtil {
     }
 
     return shortname.replaceAll('&', '');
+  }
+
+  static openDocumentOnline(BuildContext context, String path) async {
+    if(Platform.isAndroid && path.isPdf){
+      String encodedPath = Uri.encodeFull('https://docs.google.com/gview?embedded=true&url=$path');
+      await canLaunch(encodedPath) ? await launch(encodedPath) :  showInfoDialog(context,null,'Could not launch $path');
+    }else{
+      String encodedPath = Uri.encodeFull(path);
+      await canLaunch(encodedPath) ? await launch(encodedPath) :  showInfoDialog(context,null,'Could not launch $path');
+    }
   }
 
 

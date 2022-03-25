@@ -8,6 +8,8 @@ import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:nb_utils/nb_utils.dart';
 
 class AddCourseController {
+  //========================================================VARIABLES=======================================================================
+
   final FirebaseFirestore _db = FirebaseFirestore.instance;
 
   String? id;
@@ -59,7 +61,8 @@ class AddCourseController {
   String? courseImage;
 
   bool isEdit = false;
-
+  Course? course;
+  String? courseId;
 
   List<String> courseColorSelection = [
     'Yellow',
@@ -87,6 +90,8 @@ class AddCourseController {
     Colors.teal[300]!,
   ];
 
+  //========================================================METHODS=======================================================================
+
   populateData(Course course) {
     id = course.id;
     courseCode = course.courseCode;
@@ -101,7 +106,7 @@ class AddCourseController {
     courseFinalDate = course.courseFinal;
     assignedTo = course.assignedTo;
     assignedToName = course.assignedToName;
-    studentEnrolled = course.studentEnrolled as int?;
+    studentEnrolled = int.parse(course.studentEnrolled!);
     venue = course.venue;
     courseImage = course.courseImage;
   }
@@ -211,38 +216,91 @@ class AddCourseController {
     data.isHide = false;
     data.createdAt = DateUtil().getDatetimeFormatServer().format(DateTime.now());
 
-    await _db.collection('Course').doc('${code}_$name').set(data.toJson()).then((value) async {
-      //ADD DURATION
+    if (isEdit) {
+      //=============================================================DELETE CURRENT COURSE=================================================
+      await _db.collection('Course').doc(courseId).delete();
       for (int i = 0; i < 4; i++) {
-        String today = DateUtil().getDateFormatServer().format(DateTime.now().add(Duration(days: i * 7)));
-        _db.collection('Course').doc('${code}_$name').collection('${today}_${code}_$name')
-            .doc('${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}')
-            .set({
-          'duration': '${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}',
-          'date': DateUtil().getDateFormatServer().format(DateTime.parse(timeStart)),
-          'duration_datetime' : DateUtil().getDatetimeFormatServer().format(DateTime.parse(timeStart)),
-          'createdAt': DateUtil().getDatetimeFormatServer().format(DateTime.now()),
-        });
+        String today = DateUtil().getDateFormatServer().format(DateTime.parse(course!.createdAt!).add(Duration(days: i * 7)));
+        QuerySnapshot documentSnapshot = await _db.collection('Course').doc(courseId).collection('${today}_$courseId').get();
+        for (var document in documentSnapshot.docs) {
+          document.reference.delete();
+        }
       }
-      //UPDATE ASSIGNED COURSE FOR LECTURER
-      final DocumentSnapshot userReference = await _db.collection('account').doc(assignedTo).get();
-      List<String>? courseAssigned = Account.fromJson((userReference.data() as Map<String, dynamic>)).courseAssigned;
+      //=============================================================DELETE ACCOUNT REFERENCE=================================================
+      DocumentSnapshot accountSnapshot = await _db.collection('account').doc(assignedTo).get();
+      List<String>? courseAssigned = Account.fromJson(accountSnapshot.data() as Map<String, dynamic>).courseAssigned!.where((element) => element != courseId).toList();
       await _db.collection('account').doc(assignedTo).update({
-        'courseAssigned': courseAssigned != null ? [...courseAssigned, '${code}_$name'] : ['${code}_$name'],
-      }).then((result) {
-        showSuccessDialog(context, 'Success', 'Course Created', () {
-          Navigator.of(context).pop();
-          Navigator.of(context).pop({
-            'result': 200,
-          });
-        });
+        'courseAssigned': [...courseAssigned],
       });
 
+      //=============================================================ADD ACCOUNT REFERENCE=================================================
+      await _db.collection('Course').doc('${code}_$name').set(data.toJson()).then((value) async {
+        //ADD DURATION
+        for (int i = 0; i < 4; i++) {
+          String today = DateUtil().getDateFormatServer().format(DateTime.now().add(Duration(days: i * 7)));
+          _db.collection('Course').doc('${code}_$name').collection('${today}_${code}_$name')
+              .doc('${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}')
+              .set({
+            'duration': '${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}',
+            'date': DateUtil().getDateFormatServer().format(DateTime.parse(timeStart)),
+            'duration_datetime' : DateUtil().getDatetimeFormatServer().format(DateTime.parse(timeStart)),
+            'createdAt': DateUtil().getDatetimeFormatServer().format(DateTime.now()),
+          });
+        }
+        //UPDATE ASSIGNED COURSE FOR LECTURER
+        final DocumentSnapshot userReference = await _db.collection('account').doc(assignedTo).get();
+        List<String>? courseAssigned = Account.fromJson((userReference.data() as Map<String, dynamic>)).courseAssigned;
+        await _db.collection('account').doc(assignedTo).update({
+          'courseAssigned': courseAssigned != null ? [...courseAssigned, '${code}_$name'] : ['${code}_$name'],
+        }).then((result) {
+          showSuccessDialog(context, 'Success', 'Course Edited', () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pop({
+              'result': 200,
+              'newCourseId': '${code}_$name',
+            });
+          });
+        });
 
-    }, onError: (e) {
-      Navigator.of(context).pop();
-      showInfoDialog(context, null, e);
-    });
+
+      }, onError: (e) {
+        Navigator.of(context).pop();
+        showInfoDialog(context, null, e);
+      });
+    } else {
+      await _db.collection('Course').doc('${code}_$name').set(data.toJson()).then((value) async {
+        //ADD DURATION
+        for (int i = 0; i < 4; i++) {
+          String today = DateUtil().getDateFormatServer().format(DateTime.now().add(Duration(days: i * 7)));
+          _db.collection('Course').doc('${code}_$name').collection('${today}_${code}_$name')
+              .doc('${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}')
+              .set({
+            'duration': '${DateUtil().getTimeFormatServer().format(DateTime.parse(timeStart))} - ${DateUtil().getTimeFormatServer().format(DateTime.parse(timeEnd))}',
+            'date': DateUtil().getDateFormatServer().format(DateTime.parse(timeStart)),
+            'duration_datetime' : DateUtil().getDatetimeFormatServer().format(DateTime.parse(timeStart)),
+            'createdAt': DateUtil().getDatetimeFormatServer().format(DateTime.now()),
+          });
+        }
+        //UPDATE ASSIGNED COURSE FOR LECTURER
+        final DocumentSnapshot userReference = await _db.collection('account').doc(assignedTo).get();
+        List<String>? courseAssigned = Account.fromJson((userReference.data() as Map<String, dynamic>)).courseAssigned;
+        await _db.collection('account').doc(assignedTo).update({
+          'courseAssigned': courseAssigned != null ? [...courseAssigned, '${code}_$name'] : ['${code}_$name'],
+        }).then((result) {
+          showSuccessDialog(context, 'Success', 'Course Created', () {
+            Navigator.of(context).pop();
+            Navigator.of(context).pop({
+              'result': 200,
+            });
+          });
+        });
+
+
+      }, onError: (e) {
+        Navigator.of(context).pop();
+        showInfoDialog(context, null, e);
+      });
+    }
 
 
   }
