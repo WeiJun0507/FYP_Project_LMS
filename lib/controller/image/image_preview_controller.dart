@@ -5,6 +5,8 @@ import 'package:flutter/material.dart';
 import 'dart:ui' as ui;
 
 import 'package:chewie/chewie.dart';
+import 'package:fyp_lms/web_service/model/course/course.dart';
+import 'package:fyp_lms/web_service/model/post/post.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:video_player/video_player.dart';
@@ -19,12 +21,16 @@ class ImagePreviewController {
   //CLICKED INDEX
   late int currentIndex;
 
-  bool isLoading = false, barVisible = true;
+  Course? course;
+  Post? post;
+
+  bool isLoading = false, barVisible = true, fromCourse = false, fromPost = false;
 
   int onScreenPointer = 0;
 
   //ALL ATTACHMENT LIST
   List<dynamic> attachmentList = List.empty();
+  List<dynamic> attachmentListOri = List.empty();
   Map<int, VideoPlayerController> videoPlayerController = {};
   Map<int, ChewieController> customVideoPlayerController = {};
 
@@ -41,6 +47,7 @@ class ImagePreviewController {
     convertFileToImage(context, attachmentList[currentIndex], onCallback);
 
     for (int index = 0; index < attachmentList.length; index++) {
+
       var element = attachmentList[index];
       if (isVideo(element)) {
         if (element.toString().contains('http')) {
@@ -73,7 +80,9 @@ class ImagePreviewController {
                   ));
         }
       }
+      onCallback();
     }
+    onCallback();
   }
 
   onChangedPage(BuildContext context, int index, VoidCallback onCallback) {

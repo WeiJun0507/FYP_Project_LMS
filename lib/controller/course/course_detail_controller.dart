@@ -135,6 +135,13 @@ class CourseDetailController {
       courseMaterial.fileSize = file.size.toString();
       courseMaterial.materialType = file.name.isVideo ? 'video' : file.name.isImage ? 'image' : 'document';
       courseMaterial.submittedBy = accountId;
+      _db
+          .collection('course_material')
+          .doc('${course!.courseCode}_${course!.courseName}').set({
+        'courseBelonging': '${course!.courseCode}_${course!.courseName}',
+        'createdDate': course!.createdAt,
+        'id': '${course!.courseCode}_${course!.courseName}_${file.name}'
+      });
 
       _db.collection('course_material')
           .doc('${course!.courseCode}_${course!.courseName}')

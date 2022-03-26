@@ -159,17 +159,21 @@ class PostDetailController {
     showLoading(context);
 
     //DELETE POST
+    print('========================================================START DELETE POST=======================================================');
     await _db.collection('post').doc(post.id).delete();
-
+    print('========================================================END DELETE POST=======================================================');
 
     //DELETE POST MATERIAL
+    print('========================================================START DELETE POST MATERIAL=======================================================');
+    await _db.collection('post_material').doc(post.id).delete();
     QuerySnapshot postMaterialSnapshot = await _db.collection('post_material').doc(post.id).collection(post.id!).get();
     for (var postMaterial in postMaterialSnapshot.docs) {
       postMaterial.reference.delete();
     }
+    print('========================================================END DELETE POST MATERIAL=======================================================');
 
-    Navigator.of(context).pop();
     showSuccessDialog(context, 'Delete Success', 'Post is Removed successfully', () {
+      Navigator.of(context).pop();
       Navigator.of(context).pop();
     });
   }
@@ -290,10 +294,23 @@ class PostDetailController {
         : 'document';
     courseMaterial.submittedBy = accountName;
     print('===============================================ADD POST MATERIAL===================================================');
+    DocumentSnapshot snapshot = await _db
+        .collection('post_material')
+        .doc('${post!.id}').get();
+    List attachment = (snapshot.data() as Map<String, dynamic>)['fileList'];
+
     _db
         .collection('post_material')
-        .doc('${post!.courseBelonging}_$createdDate')
-        .collection('${post!.courseBelonging}_$createdDate')
+        .doc('${post!.id}').set({
+      'courseBelonging': post!.courseBelonging,
+      'createdDate': post!.createdDate,
+      'id': '${post!.courseBelonging}_$createdDate',
+      'fileList': [...attachment, '${post!.courseBelonging}_${createdDate}_${file.path}']
+    });
+    _db
+        .collection('post_material')
+        .doc('${post!.id}')
+        .collection('${post!.id}')
         .doc('${post!.courseBelonging}_${createdDate}_${file.path}')
         .set(courseMaterial.toJson())
         .then((_) {}, onError: (e) {

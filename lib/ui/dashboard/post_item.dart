@@ -104,7 +104,7 @@ Widget postItem(BuildContext context, Post post, dynamic controller, VoidCallbac
             // DOCS, IMAGE DISPLAY
             post.attachments == null || post.attachments!.isEmpty ? const SizedBox() : Container(
               height: 50,
-              child: attachmentComment(context, post.attachments),
+              child: attachmentComment(context, post.attachments, controller),
             ),
 
             Spacer(),
@@ -146,7 +146,7 @@ Widget postItem(BuildContext context, Post post, dynamic controller, VoidCallbac
                         Icon(Icons.message, size: 18, color: Colors.grey,),
                         const SizedBox(width: normal_padding,),
                         //TEXT
-                        Text('Comment 0', style: GoogleFonts.poppins().copyWith(
+                        Text('Comment ${post.commentsCount}', style: GoogleFonts.poppins().copyWith(
                           fontSize: SUB_TITLE,
                         ),)
                       ],

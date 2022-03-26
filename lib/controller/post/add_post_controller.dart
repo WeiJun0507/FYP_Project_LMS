@@ -305,6 +305,23 @@ class AddPostController {
             : 'document';
     courseMaterial.submittedBy = createdBy;
     print('===============================================ADD POST MATERIAL===================================================');
+
+    DocumentSnapshot snapshot = await _db
+        .collection('post_material')
+        .doc('${courseBelonging}_$createdDate').get();
+    List attachment = List.empty(growable: true);
+    if (snapshot.data() != null) {
+      attachment = (snapshot.data() as Map<String, dynamic>)['fileList'];
+    }
+
+    _db
+        .collection('post_material')
+        .doc('${courseBelonging}_$createdDate').set({
+      'courseBelonging': courseBelonging,
+      'createdDate': createdDate,
+      'id': '${courseBelonging}_$createdDate',
+      'fileList': [...attachment, '${courseBelonging}_${createdDate}_${file.path}']
+    });
     _db
         .collection('post_material')
         .doc('${courseBelonging}_$createdDate')

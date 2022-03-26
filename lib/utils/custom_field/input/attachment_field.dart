@@ -13,6 +13,8 @@ import '../../constant.dart';
 import '../../dialog.dart';
 import '../common/round_corner_image_view.dart';
 
+//ADD ATTACHMENT
+
 Widget attachmentField(
     BuildContext context,
     dynamic controller,
@@ -139,7 +141,12 @@ Widget getDisplayWidget(List<String> attachmentList, dynamic controller, editabl
             controller.attachments.remove(path2);
             onChanged();
 
-          }, size: 70.0, space: 6);
+          }, size: 70.0, space: 6).onTap(() {
+            Navigator.of(context).pushNamed('/ImagePreviewScreen', arguments: {
+              'attachments': attachmentList,
+              'currentIndex': index,
+            });
+          });
         }),
   );
 }

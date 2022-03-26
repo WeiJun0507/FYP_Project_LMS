@@ -51,22 +51,21 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
     controller.user = Account.fromJson(jsonDecode(_sPref.getString('accountInfo')!));
     controller.accountType = _sPref.getInt('accountType');
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
-      if (arguments['post'] != null) {
-        setState(() {
-          controller.post = arguments['post'];
-          controller.postId = controller.post!.id;
-        });
-      }
-      if (arguments['isLiked'] != null) {
-        setState(() {
-          controller.isLiked = arguments['isLiked'];
 
-        });
-      }
-      fetchComment();
-    });
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+    if (arguments['post'] != null) {
+      setState(() {
+        controller.post = arguments['post'];
+        controller.postId = controller.post!.id;
+      });
+    }
+    if (arguments['isLiked'] != null) {
+      setState(() {
+        controller.isLiked = arguments['isLiked'];
+
+      });
+    }
+    fetchComment();
     setState(() {
       controller.isLoading = false;
     });
@@ -135,7 +134,6 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
 
                                     case 2:
                                     //DELETE POST
-                                      Navigator.of(context).pop();
                                       controller.deletePost(context, controller.post!);
                                       break;
                                     default:
@@ -389,7 +387,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 Container(
                                   margin: const EdgeInsets.all(normal_padding),
                                   height: 75.0,
-                                  child: attachmentComment(context, controller.post!.attachments),
+                                  child: attachmentComment(context, controller.post!.attachments, controller),
                                 ),
                               ],
                             ),
@@ -502,7 +500,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                             // DOCS, IMAGE DISPLAY
                                             comment.attachments == null || comment.attachments!.isEmpty ? const SizedBox() : Container(
                                               height: 75,
-                                              child: attachmentComment(context, comment.attachments),
+                                              child: attachmentComment(context, comment.attachments, controller),
                                             ),
 
 
@@ -727,6 +725,8 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                                               controller.attachmentsFull.clear();
 
                                                             });
+                                                          } else {
+                                                            showInfoDialog(context, null, 'Comment cannot be empty');
                                                           }
                                                         }),
                                                       ],

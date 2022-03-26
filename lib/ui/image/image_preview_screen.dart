@@ -4,10 +4,14 @@ import 'dart:io';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:carousel_slider/carousel_slider.dart';
 import 'package:chewie/chewie.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:fyp_lms/controller/image/image_preview_controller.dart';
 import 'package:fyp_lms/utils/constant.dart';
+import 'package:fyp_lms/utils/custom_field/common/round_corner_image_view.dart';
+import 'package:fyp_lms/web_service/model/course_material/course_material.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:gallery_saver/gallery_saver.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -37,30 +41,80 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((value) {
-      _sPref = value;
-
-      controller.isLoading = true;
-
-
+      setState(() {
+        _sPref = value;
+        controller.isLoading = true;
+        initialize();
+      });
     });
   }
 
-  initialize() {
+  initialize() async {
     //_sPref.setString('accountInfo', jsonEncode(createdUser));
     controller.accountId = _sPref!.getString('account');
     controller.accountName = _sPref!.getString('username');
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
     controller.accountType = _sPref!.getInt('accountType');
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
-    });
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
 
-    controller.initialization(context, () { });
+    if (arguments['currentIndex'] != null) {
+     setState(() {
+       controller.currentIndex = arguments['currentIndex'];
+     });
+    }
+
+    if (arguments['attachments'] != null) {
+      setState(() {
+        controller.attachmentListOri = arguments['attachments'];
+        controller.attachmentList = arguments['attachments'].map((String attachment) {
+          if (attachment.contains('http')) {
+            String? path = attachment;
+            String? pathCopy = attachment;
+            int extensionIndex = path.indexOf('?');
+            if (pathCopy.substring(
+                pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) !=
+                'jpg' &&
+                pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1,
+                    extensionIndex) != 'jpeg' &&
+                pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1,
+                    extensionIndex) != 'png') {
+              bool video = isVideo(attachment.substring(0, extensionIndex));
+              if (!video) {
+                path = path.substring(0, extensionIndex);
+              }
+            }
+            return path;
+          } else {
+            return attachment;
+          }
+        }).toList();
+      });
+    }
+
+    if (arguments['course'] != null) {
+      controller.course = arguments['course'];
+      controller.fromCourse = true;
+    }
+
+    if (arguments['post'] != null) {
+      controller.post = arguments['post'];
+      controller.fromPost = true;
+    }
+
+
+
+
+    await controller.initialization(context, () {
+      setState(() {
+        controller.isLoading = false;
+      });
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    print(controller.attachmentList[controller.currentIndex]);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -88,7 +142,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                 child: Icon(Icons.downloading,
                                     color: Colors.white, size: 46)),
                             SizedBox(height: 10),
-                            Text("Uploading...",
+                            Text('Uploading...',
                                 style: TextStyle(fontSize: 14, color: white),
                                 textAlign: TextAlign.center),
                           ],
@@ -96,18 +150,13 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                       );
                     }
 
-                    bool isDocument = controller.attachmentList[itemIndex]
-                            .toString()
-                            .isDoc ||
-                        controller.attachmentList[itemIndex]
-                            .toString()
-                            .isExcel ||
+                    bool isDocument = controller.attachmentList[itemIndex].toString().isDoc ||
+                        controller.attachmentList[itemIndex].toString().isExcel ||
                         controller.attachmentList[itemIndex].toString().isPdf ||
                         controller.attachmentList[itemIndex].toString().isPPT ||
                         controller.attachmentList[itemIndex].toString().isTxt ||
-                        p.extension(controller.attachmentList[itemIndex]
-                                .toString()) ==
-                            '.csv';
+                        p.extension(controller.attachmentList[itemIndex].toString()) == '.csv';
+
 
                     return controller.isLoading
                         ? Center(
@@ -120,8 +169,9 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                     alignment: Alignment.center,
                                     child: documentWidget(
                                         context,
-                                        controller.attachmentList[itemIndex]
-                                            .toString()),
+                                        controller.attachmentList[itemIndex].toString(),
+                                        controller.attachmentListOri[itemIndex].toString(),
+                                    ),
                                   )
                                 :
                                 //HANDLE IMAGE OR VIDEO
@@ -181,6 +231,8 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                             })
                                     : videoPlayer(context, itemIndex));
                   },
+
+
                   options: CarouselOptions(
                     viewportFraction: 1,
                     autoPlay: false,
@@ -270,47 +322,69 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                     (value) async {
                                   if (value != null && value is int) {
                                     if (value == 1) {
-                                      if (controller.attachmentList[
-                                              controller.currentIndex] ==
-                                          null) {
-                                        showInfoDialog(context, null,
-                                            'File not available for download');
-                                        return;
+                                      if (controller.attachmentList[controller.currentIndex] == null) {
+                                        showInfoDialog(context, null, 'File not available for download');
+                                        return false;
                                       }
 
                                       Future<bool?> savedSuccess;
                                       showLoading(context);
-                                      if (isVideo(controller.attachmentList[
-                                              controller.currentIndex]
-                                          .toString())) {
-                                        savedSuccess = GallerySaver.saveVideo(
-                                            Uri.parse(controller.attachmentList[
-                                                    controller.currentIndex])
-                                                .toString());
+
+                                      String? pathCopy = controller.attachmentList[controller.currentIndex].toString();
+                                      int? extensionIndex = pathCopy.indexOf('?') == -1 ? null : pathCopy.indexOf('?');
+                                      String pathCut = pathCopy.substring(0, extensionIndex);
+
+                                      if (isVideo(pathCut)) {
+                                        savedSuccess = GallerySaver.saveVideo(Uri.parse(controller.attachmentList[controller.currentIndex]).toString());
+                                      } else if (pathCut.isImage) {
+                                        savedSuccess = GallerySaver.saveImage(Uri.parse(controller.attachmentList[controller.currentIndex]).toString());
                                       } else {
-                                        savedSuccess = GallerySaver.saveImage(
-                                            Uri.parse(controller.attachmentList[
-                                                    controller.currentIndex])
-                                                .toString());
+                                        FirebaseFirestore _db = FirebaseFirestore.instance;
+                                        FirebaseStorage _storage = FirebaseStorage.instance;
+                                        CourseMaterial? courseMaterial;
+
+                                        //SEARCH DOCUMENT
+                                        if (controller.fromCourse) {
+                                          DocumentSnapshot reference = await _db.collection('course_material')
+                                              .doc(controller.course!.id)
+                                              .get();
+
+                                          if (reference.data() != null) {
+                                            String id = (reference.data() as Map<String, dynamic>)['fileList'][controller.currentIndex];
+                                            DocumentSnapshot material = await _db.collection('course_material').doc(controller.course!.id).collection(controller.course!.id!).doc(id).get();
+
+                                            if (material.data() != null) {
+                                              courseMaterial = CourseMaterial.fromJson(material.data() as Map<String, dynamic>);
+                                            }
+                                          }
+                                        } else {
+                                          DocumentSnapshot reference = await _db.collection('post_material').doc(controller.post!.id).get();
+
+                                          if (reference.data() != null) {
+                                            String id = (reference.data() as Map<String, dynamic>)['fileList'][controller.currentIndex];
+                                            DocumentSnapshot postMaterial = await _db.collection('post_material').doc(controller.post!.id).collection(controller.post!.id!).doc(id).get();
+
+                                            if (postMaterial.data() != null) {
+                                              courseMaterial = CourseMaterial.fromJson(postMaterial.data() as Map<String, dynamic>);
+                                            }
+                                          }
+                                        }
+                                        String downloadedLink = await _storage.ref(courseMaterial!.id).getDownloadURL();
+
+                                        await launch(downloadedLink);
+                                        savedSuccess = Future.value(true);
                                       }
                                       Navigator.of(context).pop();
 
                                       savedSuccess.then((success) {
                                         if (success != null && success) {
-                                          ScaffoldMessenger.of(context)
-                                              .showSnackBar(SnackBar(
+                                          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
                                             behavior: SnackBarBehavior.floating,
-                                            duration:
-                                                Duration(milliseconds: 500),
-                                            margin: EdgeInsets.only(
-                                                bottom: MediaQuery.of(context)
-                                                        .size
-                                                        .height *
-                                                    0.1,
-                                                left: large_padding,
-                                                right: large_padding),
+                                            duration: Duration(milliseconds: 500),
+                                            margin: EdgeInsets.only(bottom: MediaQuery.of(context).size.height * 0.1, left: large_padding, right: large_padding),
                                             content: Container(),
                                           ));
+
                                           // Get.snackbar('copied'.tr, 'address_copied'.tr,
                                           //     snackPosition: SnackPosition.BOTTOM,
                                           //     snackStyle: SnackStyle.FLOATING,
@@ -320,9 +394,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                         } else {}
                                       });
                                     } else if (value == 2) {
-                                      Share.share(Uri.encodeFull(
-                                          controller.attachmentList[
-                                              controller.currentIndex]));
+                                      Share.share(Uri.encodeFull(controller.attachmentList[controller.currentIndex]));
                                     }
                                   }
                                 });
@@ -354,7 +426,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
     );
   }
 
-  Widget documentWidget(BuildContext context, String path) {
+  Widget documentWidget(BuildContext context, String path, String oriPath) {
     //doc, docx, xls, xlsx, ppt, pptx, .txt, .csv, .pdf
     return Column(
       mainAxisAlignment: MainAxisAlignment.center,
@@ -371,13 +443,14 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
             textAlign: TextAlign.center),
       ],
     ).onTap(() async {
-      String encodedPath = Uri.encodeFull(path);
+
+      String encodedPath = Uri.encodeFull(oriPath);
       if (encodedPath.contains('http')) {
         await canLaunch(encodedPath)
             ? await launch(encodedPath)
-            : showInfoDialog(context, null, 'Could not launch $path');
+            : showInfoDialog(context, null, 'Could not launch $oriPath');
       } else {
-        OpenFile.open(path);
+        OpenFile.open(oriPath);
       }
     });
   }

@@ -43,18 +43,18 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
     controller.accountType = _sPref!.getInt('accountType');
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-      final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
-      if (arguments['course'] != null) {
-        setState(() {
-          controller.course = arguments['course'];
-          fetchPosts();
-        });
-      }
-      if (arguments['courseId'] != null) {
-        fetchCourse(arguments['courseId']);
-      }
-    });
+
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+    if (arguments['course'] != null) {
+      setState(() {
+        controller.course = arguments['course'];
+        fetchPosts();
+      });
+    }
+    if (arguments['courseId'] != null) {
+      fetchCourse(arguments['courseId']);
+    }
+
   }
 
   fetchCourse(String courseId) async {

@@ -1,16 +1,27 @@
+import 'dart:io';
+
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:fyp_lms/controller/course/course_detail_controller.dart';
+import 'package:fyp_lms/controller/post/post_detail_controller.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/custom_field/common/round_corner_document_view.dart';
 import 'package:fyp_lms/utils/custom_field/common/round_corner_image_view.dart';
+import 'package:fyp_lms/utils/dialog.dart';
 import 'package:fyp_lms/utils/general_utils.dart';
+import 'package:fyp_lms/web_service/model/course_material/course_material.dart';
 import 'package:nb_utils/nb_utils.dart';
 import 'package:open_file/open_file.dart';
 import 'package:path/path.dart' as p;
+import 'package:url_launcher/url_launcher.dart';
 
+//ATTACHMENT DISPLAY
 
 Widget attachmentComment(
     BuildContext context,
-    commentAttachment){
+    commentAttachment,
+    dynamic controller){
 
   List<dynamic> attachmentList = commentAttachment;
 
@@ -58,11 +69,44 @@ Widget attachmentComment(
           roundCornerDocument(path, (path) => null, size: 50.0, iconSize: 20.0, showDelete: false).onTap(() async {
 
             if(path!.contains('http')){
-              GeneralUtil.openDocumentOnline(context,path);
-              //String encodedPath = Uri.encodeFull(path);
-              //await canLaunch(encodedPath) ? await launch(encodedPath) :  showInfoDialog(context,null,'Could not launch $path');
+              FirebaseFirestore _db = FirebaseFirestore.instance;
+              FirebaseStorage _storage = FirebaseStorage.instance;
+              CourseMaterial? courseMaterial;
+
+              //SEARCH DOCUMENT
+              if (controller is CourseDetailController) {
+                DocumentSnapshot reference = await _db.collection('course_material')
+                    .doc(controller.course!.id)
+                    .get();
+
+                if (reference.data() != null) {
+                  String id = (reference.data() as Map<String, dynamic>)['fileList'][index];
+                  DocumentSnapshot material = await _db.collection('course_material').doc(controller.course!.id).collection(controller.course!.id!).doc(id).get();
+
+                  if (material.data() != null) {
+                    courseMaterial = CourseMaterial.fromJson(material.data() as Map<String, dynamic>);
+                  }
+                }
+              } else {
+                DocumentSnapshot reference = await _db.collection('post_material')
+                    .doc(controller.post!.id)
+                    .get();
+
+                if (reference.data() != null) {
+                  String id = (reference.data() as Map<String, dynamic>)['fileList'][index];
+                  DocumentSnapshot postMaterial = await _db.collection('post_material').doc(controller.post!.id).collection(controller.post!.id!).doc(id).get();
+
+                  if (postMaterial.data() != null) {
+                    courseMaterial = CourseMaterial.fromJson(postMaterial.data() as Map<String, dynamic>);
+                  }
+                }
+              }
+
+              String downloadedLink = await _storage.ref(courseMaterial!.id).getDownloadURL();
+
+              await launch(downloadedLink);
             }else {
-              OpenFile.open(path);
+              OpenFile.open(attachmentList[index]);
             }
 
           }) :
@@ -71,6 +115,8 @@ Widget attachmentComment(
             Navigator.of(context).pushNamed('/ImagePreviewScreen', arguments: {
               'attachments': attachmentList,
               'currentIndex': index,
+              'course': controller.course,
+              'post': controller.post,
             });
           });
         }),
