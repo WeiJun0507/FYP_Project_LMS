@@ -305,7 +305,8 @@ class PostDetailController {
       'courseBelonging': post!.courseBelonging,
       'createdDate': post!.createdDate,
       'id': '${post!.courseBelonging}_$createdDate',
-      'fileList': [...attachment, '${post!.courseBelonging}_${createdDate}_${file.path}']
+      'fileList': [...attachment, '${post!.courseBelonging}_${createdDate}_${file.path}'],
+      'uploadedBy': user!.id,
     });
     _db
         .collection('post_material')

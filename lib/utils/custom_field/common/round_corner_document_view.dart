@@ -63,6 +63,7 @@ Widget documentWidget(String path, double size, double iconSize) {
     width: size,
     height: size,
     child: Column(
+      mainAxisAlignment: MainAxisAlignment.spaceEvenly,
       children: [
         SvgPicture.asset(
           getDocIcon(path),

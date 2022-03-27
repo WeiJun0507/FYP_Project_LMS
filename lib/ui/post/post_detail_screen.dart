@@ -129,6 +129,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                     //TODO: EDIT POST
                                       Navigator.of(context).pushNamed('/AddPostScreen', arguments: {
                                         'post': controller.post,
+                                        'courseId': controller.post!.courseBelonging,
                                       });
                                       break;
 

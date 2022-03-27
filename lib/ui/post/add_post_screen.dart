@@ -8,6 +8,7 @@ import 'package:fyp_lms/utils/custom_field/input/dropdown_field.dart';
 import 'package:fyp_lms/utils/custom_field/input/textarea_input_field.dart';
 import 'package:fyp_lms/utils/custom_picker/dropdown_picker.dart';
 import 'package:fyp_lms/utils/date_util.dart';
+import 'package:fyp_lms/utils/general_utils.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:nb_utils/nb_utils.dart';
@@ -74,23 +75,23 @@ class _AddPostScreenState extends State<AddPostScreen> {
     }
     //TODO: IF COURSE ID IS NULL LET USER CHOOSE THE COURSE
 
-    // if (arguments['post'] != null) {
-    //   setState(() {
-    //     controller.isEdit = true;
-    //     Course course = arguments['course'];
-    //     //controller.populateData(course);
-    //
-    //
-    //
-    //     DateTime now = DateTime.now();
-    //     List<String> start = course.courseHour![0].split(':');
-    //     List<String> end = course.courseHour![1].split(':');
-    //     timeStartDisplay = DateUtil().getDatetimeFormatServer().format(DateTime(now.year,now.month,now.day,int.tryParse(start[0])!,int.tryParse(start[1])!));
-    //     timeEndDisplay = DateUtil().getDatetimeFormatServer().format(DateTime(now.year,now.month,now.day,int.tryParse(end[0])!,int.tryParse(end[1])!));
-    //
-    //
-    //   });
-    // }
+    if (arguments['post'] != null) {
+      setState(() {
+        controller.isEdit = true;
+        //Course course = arguments['course'];
+        //controller.populateData(course);
+
+
+
+        // DateTime now = DateTime.now();
+        // List<String> start = course.courseHour![0].split(':');
+        // List<String> end = course.courseHour![1].split(':');
+        // timeStartDisplay = DateUtil().getDatetimeFormatServer().format(DateTime(now.year,now.month,now.day,int.tryParse(start[0])!,int.tryParse(start[1])!));
+        // timeEndDisplay = DateUtil().getDatetimeFormatServer().format(DateTime(now.year,now.month,now.day,int.tryParse(end[0])!,int.tryParse(end[1])!));
+
+
+      });
+    }
   }
 
   @override
@@ -98,13 +99,14 @@ class _AddPostScreenState extends State<AddPostScreen> {
     return Scaffold(
       appBar: AppBar(
         backgroundColor: controller.color ?? BG_COLOR_4,
-        leading: Icon(Icons.arrow_back, color: Colors.white,).onTap(() {
+        leading: Icon(Icons.arrow_back, color: GeneralUtil().getTextColor(controller.color!),).onTap(() {
           Navigator.of(context).pop();
         }),
         centerTitle: true,
-        title: Text(controller.isEdit ? 'edit Post' : 'Add New Post', style: GoogleFonts.poppins().copyWith(
+        title: Text(controller.isEdit ? 'Edit Post' : 'Add New Post', style: GoogleFonts.poppins().copyWith(
           fontSize: TITLE,
           fontWeight: FontWeight.bold,
+          color: GeneralUtil().getTextColor(controller.color!),
         ),),
         elevation: 0,
         actions: [
@@ -112,7 +114,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
             padding: const EdgeInsets.all(normal_padding),
             alignment: Alignment.center,
             child: Text('Done', style: GoogleFonts.poppins().copyWith(
-              color: Colors.white,
+              color: GeneralUtil().getTextColor(controller.color!),
               fontWeight: FontWeight.bold,
             ),),
           ).onTap(() {
@@ -155,7 +157,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                 Text('Post Type:', style: GoogleFonts.poppins().copyWith(
                                   fontSize: TITLE,
                                   fontWeight: FontWeight.w600,
-                                  color: Colors.white,
+                                  color: GeneralUtil().getTextColor(controller.color!),
                                 ),),
                                 //TextField
                                 Container(
@@ -202,7 +204,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                                     Text('Post Type Color:', style: GoogleFonts.poppins().copyWith(
                                       fontSize: TITLE,
                                       fontWeight: FontWeight.w600,
-                                      color: Colors.white,
+                                      color: GeneralUtil().getTextColor(controller.color!),
                                     ),),
                                     //TextField
                                     Container(
@@ -249,7 +251,7 @@ class _AddPostScreenState extends State<AddPostScreen> {
                       Text('Post Title:', style: GoogleFonts.poppins().copyWith(
                         fontSize: TITLE,
                         fontWeight: FontWeight.w600,
-                        color: Colors.white,
+                        color: GeneralUtil().getTextColor(controller.color!),
                       ),),
                       //TextField
                       Container(

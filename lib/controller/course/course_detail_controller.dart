@@ -135,12 +135,20 @@ class CourseDetailController {
       courseMaterial.fileSize = file.size.toString();
       courseMaterial.materialType = file.name.isVideo ? 'video' : file.name.isImage ? 'image' : 'document';
       courseMaterial.submittedBy = accountId;
+
+      DocumentSnapshot courseMaterialSnapshot = await _db
+          .collection('course_material')
+          .doc('${course!.id}').get();
+      List attachment = (courseMaterialSnapshot.data() as Map<String, dynamic>)['fileList'];
+
       _db
           .collection('course_material')
           .doc('${course!.courseCode}_${course!.courseName}').set({
         'courseBelonging': '${course!.courseCode}_${course!.courseName}',
         'createdDate': course!.createdAt,
-        'id': '${course!.courseCode}_${course!.courseName}_${file.name}'
+        'id': '${course!.courseCode}_${course!.courseName}_${file.name}',
+        'fileList': [...attachment, '${course!.courseCode}_${course!.courseName}_${file.name}'],
+        'uploadedBy': user!.id.toString(),
       });
 
       _db.collection('course_material')

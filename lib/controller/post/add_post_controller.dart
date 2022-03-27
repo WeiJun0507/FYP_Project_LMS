@@ -320,7 +320,8 @@ class AddPostController {
       'courseBelonging': courseBelonging,
       'createdDate': createdDate,
       'id': '${courseBelonging}_$createdDate',
-      'fileList': [...attachment, '${courseBelonging}_${createdDate}_${file.path}']
+      'fileList': [...attachment, '${courseBelonging}_${createdDate}_${file.path}'],
+      'uploadedBy': createdBy,
     });
     _db
         .collection('post_material')
