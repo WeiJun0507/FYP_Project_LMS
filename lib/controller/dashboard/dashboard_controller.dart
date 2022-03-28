@@ -54,9 +54,9 @@ class DashboardController {
   //'==========================================METHODS=================================================='
 
 
-  Future initRefresh(BuildContext context, VoidCallback onCallback) async {
+  Future<void> initRefresh(BuildContext context, VoidCallback onCallback) async {
     //FETCH UPCOMING COURSE
-    fetchUpcomingCourse(context, onCallback);
+    await fetchUpcomingCourse(context, onCallback);
   }
 
   fetchUpcomingCourse(BuildContext context, VoidCallback onCallback) async {
@@ -71,9 +71,7 @@ class DashboardController {
     print(
         '======================================BEGIN FETCH ACCOUNT===========================================');
     //GET ACCOUNT COURSE ASSIGNED
-    DocumentSnapshot account = await _db.collection('account')
-        .doc(accountId)
-        .get();
+    DocumentSnapshot account = await _db.collection('account').doc(accountId).get();
 
     print(
         '======================================STOP FETCH ACCOUNT===========================================');
@@ -89,30 +87,23 @@ class DashboardController {
     if (accountType == 1) {
       //GET ACCOUNT COURSE TAKEN
       if (account.data() != null) {
-        courseTaken = Account
-            .fromJson(account.data() as Map<String, dynamic>)
-            .courseTaken;
+        courseTaken = Account.fromJson(account.data() as Map<String, dynamic>).courseTaken;
       }
     } else {
       if (account.data() != null) {
-        courseAssigned = Account
-            .fromJson(account.data() as Map<String, dynamic>)
-            .courseAssigned;
+        courseAssigned = Account.fromJson(account.data() as Map<String, dynamic>).courseAssigned;
       }
     }
 
     if (accountType == 1) {
       if (courseTaken != null) {
         courseTaken.forEach((courseCode) async {
-          print(
-              '======================================BEGIN FETCH COURSE LIST===========================================');
+          print('======================================BEGIN FETCH COURSE LIST===========================================');
           DocumentSnapshot snapshot = await _db.collection('Course').doc(courseCode).get();
 
-          print(
-              '======================================END FETCH COURSE LIST===========================================');
+          print('======================================END FETCH COURSE LIST===========================================');
           //print('= ${snapshot.data()} =');
-          print(
-              '======================================COURSE DATA===========================================');
+          print('======================================COURSE DATA===========================================');
 
           if (snapshot.data() != null) {
             Course course = Course.fromJson(snapshot.data() as Map<String,dynamic>);
@@ -209,7 +200,7 @@ class DashboardController {
       }
     }
 
-    fetchPost(context, onCallback);
+    await fetchPost(context, onCallback);
   }
 
   fetchPost(BuildContext context, VoidCallback onCallback) async {

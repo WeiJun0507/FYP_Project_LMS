@@ -109,6 +109,8 @@ Widget courseListingBS(BuildContext context, CourseListingController controller,
                   controller.fetchCurrentCourse(() {
                     setState(() {});
                   });
+
+
                 }, onError: (e) {
                   print(e.toString());
                   if (e == 'elementExists') {

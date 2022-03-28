@@ -52,7 +52,7 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: getColorFromHex('F5F5F5'),
+      backgroundColor: pageBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         toolbarHeight: 0,
@@ -83,6 +83,55 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                       });
                     }),
                   ],
+                ),
+              ),
+
+              Container(
+                margin: const EdgeInsets.only(left: large_padding, right: large_padding, top: small_padding),
+                padding: const EdgeInsets.only(left: large_padding, right: large_padding),
+                decoration: BoxDecoration(
+                  borderRadius: BorderRadius.circular(10.0),
+                  color: Colors.white,
+                ),
+                child: TextField(
+                  controller: controller.searchController,
+                  onChanged: (newValue) {
+                    if(newValue.isEmpty){
+                      controller.searchCourse(context, () {
+                        setState(() {});
+                      });
+                    }else{
+                      controller.onSearchChanged(context, controller.searchController.text, () {
+                        setState(() {});
+                      });
+                    }
+                  },
+                  style: GoogleFonts.poppins(textStyle: TextStyle(fontSize: 14, color: Colors.black)),
+                  keyboardType: TextInputType.text,
+                  textCapitalization: TextCapitalization.sentences,
+                  enableSuggestions: false,
+                  autocorrect: false,
+                  decoration: InputDecoration(
+                      focusColor: BG_COLOR_4,
+                      border: InputBorder.none,
+                      focusedBorder: InputBorder.none,
+                      enabledBorder: InputBorder.none,
+                      errorBorder: InputBorder.none,
+                      disabledBorder: InputBorder.none,
+                      hintText: 'Search Here',
+                      suffixIcon: controller.searchController.text.isEmpty ? null : IconButton(
+                        iconSize: 20,
+                        icon: Icon(Icons.cancel),
+                        onPressed: () {
+                          setState(() {
+                            controller.searchController.clear();
+                          });
+
+                          controller.searchCourse(context, () {
+                            setState(() {});
+                          });
+                        },
+                      )),
                 ),
               ),
 
@@ -128,9 +177,12 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                               children: [
                                 controller.editMode ? Container(
                                   margin: const EdgeInsets.all(normal_padding),
-                                  child: Icon(Icons.delete, color: Colors.red, size: 18.0,),
+                                  child: Icon(Icons.visibility_off, color: Colors.red, size: 18.0,),
                                 ).onTap(() {
                                   //REMOVE COURSE
+                                  controller.hideCourse(context, controller.currentCourseList[index], () {
+                                    setState(() {});
+                                  });
                                 }): const SizedBox(),
                                 Expanded(
                                   child: Container(
@@ -230,7 +282,11 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                       fontWeight: FontWeight.bold,
                     ),),
                     const SizedBox(width: small_padding,),
-                    const Icon(Icons.edit, color: BG_COLOR_4, size: 22.0,),
+                    const Icon(Icons.edit, color: BG_COLOR_4, size: 22.0,).onTap(() {
+                      setState(() {
+                        controller.editMode2 = !controller.editMode2;
+                      });
+                    }),
                   ],
                 ),
               ),
@@ -269,11 +325,14 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
                             return IntrinsicHeight(
                               child: Row(
                                 children: [
-                                  controller.editMode ? Container(
+                                  controller.editMode2 ? Container(
                                     margin: const EdgeInsets.all(normal_padding),
-                                    child: Icon(Icons.delete, color: Colors.red, size: 18.0,),
+                                    child: Icon(Icons.visibility, color: Colors.red, size: 18.0,),
                                   ).onTap(() {
                                     //REMOVE COURSE
+                                    controller.showCourse(context, course, () {
+                                      setState(() {});
+                                    });
                                   }): const SizedBox(),
                                   Expanded(
                                     child: Container(

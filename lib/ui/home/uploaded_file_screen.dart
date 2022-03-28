@@ -71,6 +71,7 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: pageBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         toolbarHeight: 0,

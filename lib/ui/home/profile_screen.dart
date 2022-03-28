@@ -56,12 +56,12 @@ Widget buildTop(){
 
 Widget buildContent(){
   return Column(
-      children: [
-        const SizedBox(height: 6),
+      children: const [
+        SizedBox(height: 6),
         Text('Wei Jun', style: TextStyle(fontSize: TITLE, fontWeight: FontWeight.bold),),
-        const SizedBox(height: 3),
+        SizedBox(height: 3),
         Text('Course: Java Web', style: TextStyle(fontSize: SUB_TITLE),),
-        const SizedBox(height: 3),
+        SizedBox(height: 3),
         Text('Year 3 Sem 3', style: TextStyle(fontSize: SUB_TITLE),),
       ]
   );
@@ -109,6 +109,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: pageBackground,
       body: ListView(
         padding: EdgeInsets.zero,
         children: <Widget>[

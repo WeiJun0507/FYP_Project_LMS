@@ -38,7 +38,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  initializeData() {
+  initializeData() async {
     controller.accountId = _sPref!.getString('account');
     controller.accountName = _sPref!.getString('username');
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
@@ -46,7 +46,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     if (!controller.hasInit) {
       controller.hasInit = true;
-      controller.initRefresh(context, () {
+      await controller.initRefresh(context, () {
         setState(() {});
       });
     }
@@ -66,6 +66,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: pageBackground,
       appBar: AppBar(
         backgroundColor: Colors.transparent,
         toolbarHeight: 0,

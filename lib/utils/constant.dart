@@ -15,6 +15,8 @@ const BG_COLOR_4 = Color(0xFF3B57E1);
 const COLOR_INVALID = Color(0xFFCCCCCC);
 const HINT_TEXT_COLOR = Color(0xFF555555);
 
+const pageBackground = Color(0xFFEEEEEE);
+
 //INPUT BORDER COLOR
 const BORDER_BLUE = Color(0xFF3B57E1);
 const ERROR_RED = Color(0xFFFF3333);
