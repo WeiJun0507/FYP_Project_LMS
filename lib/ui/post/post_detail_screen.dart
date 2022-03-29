@@ -126,10 +126,12 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                                 if (value != null && value is int) {
                                   switch(value) {
                                     case 1:
-                                    //TODO: EDIT POST
+
                                       Navigator.of(context).pushNamed('/AddPostScreen', arguments: {
                                         'post': controller.post,
                                         'courseId': controller.post!.courseBelonging,
+                                      }).then((value) {
+                                        controller.refreshPost(context, () { });
                                       });
                                       break;
 

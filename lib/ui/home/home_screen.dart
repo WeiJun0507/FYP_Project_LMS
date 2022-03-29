@@ -154,24 +154,20 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
               );
             },
           ),
-          body: Stack(
-            children: [
-              TabBarView(
-                controller: _tabController,
-                children: const [
-                  //DASHBOARD
-                  DashboardScreen(),
+          body: TabBarView(
+            controller: _tabController,
+            children: const [
+              //DASHBOARD
+              DashboardScreen(),
 
-                  //COURSE
-                  CourseListingScreen(),
+              //COURSE
+              CourseListingScreen(),
 
-                  //UPLOADED PAGE
-                  UploadedFileScreen(),
+              //UPLOADED PAGE
+              UploadedFileScreen(),
 
-                  //PROFILE
-                  ProfileScreen(),
-                ],
-              )
+              //PROFILE
+              ProfileScreen(),
             ],
           ),
         ),

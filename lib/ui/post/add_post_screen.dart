@@ -73,23 +73,19 @@ class _AddPostScreenState extends State<AddPostScreen> {
     } else {
       await controller.fetchCourse(() { setState(() {});});
     }
-    //TODO: IF COURSE ID IS NULL LET USER CHOOSE THE COURSE
 
     if (arguments['post'] != null) {
+      await controller.fetchCourse(() { setState(() {});});
+      controller.populateData(arguments['post']);
+
+      titleController.text = controller.title!;
+      notesDescription.text = controller.notes!;
+      postTypeController.text = controller.postTypeSelection.firstWhere((element) => element == controller.type);
+      postTypeColorController.text = controller.postColorSelection[controller.postColorSelectionColor.indexOf(controller.typeColor!)];
+      postColorController.text = controller.postColorSelection[controller.postColorSelectionColor.indexOf(controller.color!)];
+
       setState(() {
         controller.isEdit = true;
-        //Course course = arguments['course'];
-        //controller.populateData(course);
-
-
-
-        // DateTime now = DateTime.now();
-        // List<String> start = course.courseHour![0].split(':');
-        // List<String> end = course.courseHour![1].split(':');
-        // timeStartDisplay = DateUtil().getDatetimeFormatServer().format(DateTime(now.year,now.month,now.day,int.tryParse(start[0])!,int.tryParse(start[1])!));
-        // timeEndDisplay = DateUtil().getDatetimeFormatServer().format(DateTime(now.year,now.month,now.day,int.tryParse(end[0])!,int.tryParse(end[1])!));
-
-
       });
     }
   }

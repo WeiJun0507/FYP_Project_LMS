@@ -139,7 +139,12 @@ class CourseDetailController {
       DocumentSnapshot courseMaterialSnapshot = await _db
           .collection('course_material')
           .doc('${course!.id}').get();
-      List attachment = (courseMaterialSnapshot.data() as Map<String, dynamic>)['fileList'];
+
+      List attachment = List.empty(growable: true);
+
+      if (courseMaterialSnapshot.data() != null) {
+        attachment = (courseMaterialSnapshot.data() as Map<String, dynamic>)['fileList'];
+      }
 
       _db
           .collection('course_material')

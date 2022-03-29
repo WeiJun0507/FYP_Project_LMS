@@ -55,20 +55,30 @@ Widget attachmentComment(
         padding: EdgeInsets.only(left: 14, right: 14),
         itemBuilder: (context, index) {
 
-          String? path = attachmentList[index];
-          String? pathCopy = attachmentList[index];
-          int extensionIndex = path!.indexOf('?');
-          if (pathCopy!.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpg' &&
-              pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpeg' &&
-              pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'png') {
-            path = path.substring(0, extensionIndex);
+          String path = attachmentList[index];
+          String pathCopy = attachmentList[index];
+          String path2 = attachmentList[index];
+
+          if (attachmentList[index].contains('http')) {
+            int extensionIndex = path.indexOf('?');
+            if (path2.substring(path2.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpg' &&
+                path2.substring(path2.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpeg' &&
+                path2.substring(path2.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'png') {
+
+              bool video = isVideo(pathCopy.substring(0, extensionIndex));
+
+              if (!video) {
+                path = path.substring(0, extensionIndex);
+              }
+
+            }
           }
 
           //RENDER DOC VIEW
           return path.isDoc || path.isExcel || path.isPdf || path.isPPT || path.isTxt || p.extension(path) == '.csv' ?
           roundCornerDocument(path, (path) => null, size: 50.0, iconSize: 20.0, showDelete: false).onTap(() async {
 
-            if(path!.contains('http')){
+            if(path.contains('http')){
               FirebaseFirestore _db = FirebaseFirestore.instance;
               FirebaseStorage _storage = FirebaseStorage.instance;
               CourseMaterial? courseMaterial;

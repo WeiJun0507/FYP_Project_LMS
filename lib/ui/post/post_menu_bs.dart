@@ -33,7 +33,7 @@ Widget postMenuBS (BuildContext context, PostDetailController controller){
               child: Row(
                 children: [
                   Icon(
-                    Icons.check,
+                    Icons.edit,
                     color: Colors.grey,
                   ),
                   Column(

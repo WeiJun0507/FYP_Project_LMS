@@ -44,15 +44,27 @@ class ImagePreviewController {
   //=============================    METHODS   ================================
 
   initialization(BuildContext context, VoidCallback onCallback) async {
-    convertFileToImage(context, attachmentList[currentIndex], onCallback);
 
     for (int index = 0; index < attachmentList.length; index++) {
 
       var element = attachmentList[index];
-      if (isVideo(element)) {
+      var element2 = attachmentList[index];
+
+
+      int extensionIndex = element2.indexOf('?');
+      bool video = false;
+
+      if (extensionIndex > 0 ) {
+        video = isVideo(element2.substring(0, extensionIndex));
+      } else {
+        video = isVideo(element2);
+      }
+
+
+      if (video) {
         if (element.toString().contains('http')) {
-          VideoPlayerController videoController =
-              VideoPlayerController.network(Uri.encodeFull(element));
+          print(element);
+          VideoPlayerController videoController = VideoPlayerController.network(element);
           await videoController.initialize();
 
           videoPlayerController.putIfAbsent(index, () => videoController);
@@ -65,8 +77,7 @@ class ImagePreviewController {
                     autoInitialize: true,
                   ));
         } else {
-          VideoPlayerController videoController =
-              VideoPlayerController.file(File(element));
+          VideoPlayerController videoController = VideoPlayerController.file(File(element));
           await videoController.initialize();
 
           videoPlayerController.putIfAbsent(index, () => videoController);
@@ -82,6 +93,7 @@ class ImagePreviewController {
       }
       onCallback();
     }
+    convertFileToImage(context, attachmentList[currentIndex], onCallback);
     onCallback();
   }
 
@@ -105,8 +117,7 @@ class ImagePreviewController {
     });
   }
 
-  convertFileToImage(BuildContext context, String currentImage,
-      VoidCallback onCallback) async {
+  convertFileToImage(BuildContext context, String currentImage, VoidCallback onCallback) async {
     if (currentImage.contains('http') && currentImage.isImage) {
       isLoading = true;
       onCallback();

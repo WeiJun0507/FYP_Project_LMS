@@ -55,20 +55,38 @@ Widget roundCornerImage(
 }
 
 Widget imageWidget(String mPath,double size) {
+
   if (mPath.contains('http')) {
+    String path = mPath;
+    String path2 = mPath;
+    String path3 = mPath;
+    bool video = false;
+
+    int extensionIndex = path.indexOf('?');
+
+    if (extensionIndex > 0) {
+      if (path2.substring(path2.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpg' &&
+          path2.substring(path2.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpeg' &&
+          path2.substring(path2.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'png') {
+
+        video = isVideo(path3.substring(0, extensionIndex));
+      }
+    } else {
+      video = isVideo(path3);
+    }
 
     return ClipRRect(
       borderRadius: BorderRadius.circular(9),
       child: Stack(
         children: [
-          isVideo(mPath) ? Container(color: Colors.grey) : Image(
+          video ? Container(color: Colors.grey) : Image(
               image: CachedNetworkImageProvider(mPath),
               width: size,
               height: size,
               fit: BoxFit.cover),
 
           //DISPLAY PLAY ICON ON THE VIDEO THUMBNAIL
-          isVideo(mPath) ? Positioned(
+          video ? Positioned(
             child: Center(child: Icon(Icons.play_circle_outline, color: Colors.grey[600], size: 30)),
           ) : SizedBox(),
         ],

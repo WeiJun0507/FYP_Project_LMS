@@ -40,6 +40,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
   @override
   void initState() {
     super.initState();
+
     SharedPreferences.getInstance().then((value) {
       setState(() {
         _sPref = value;
@@ -72,18 +73,23 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
             String? path = attachment;
             String? pathCopy = attachment;
             int extensionIndex = path.indexOf('?');
-            if (pathCopy.substring(
-                pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) !=
-                'jpg' &&
-                pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1,
-                    extensionIndex) != 'jpeg' &&
-                pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1,
-                    extensionIndex) != 'png') {
-              bool video = isVideo(attachment.substring(0, extensionIndex));
-              if (!video) {
-                path = path.substring(0, extensionIndex);
+
+            if (extensionIndex > 0) {
+              if (pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpg' &&
+                  pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpeg' &&
+                  pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'png') {
+
+                bool video = isVideo(attachment.substring(0, extensionIndex));
+
+                if (!video) {
+                  path = path.substring(0, extensionIndex);
+                }
+
               }
+            } else {
+              path = path;
             }
+
             return path;
           } else {
             return attachment;
@@ -114,7 +120,6 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(controller.attachmentList[controller.currentIndex]);
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
@@ -129,6 +134,16 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                   key: ValueKey(1),
                   itemCount: controller.attachmentList.length,
                   itemBuilder: (BuildContext context, int itemIndex, int _) {
+                    String copy = controller.attachmentList[itemIndex];
+                    int extensionIndex = controller.attachmentList[itemIndex].indexOf('?');
+                    bool video = false;
+
+                    if (extensionIndex > 0 ) {
+                      video = isVideo(copy.substring(0, extensionIndex));
+                    } else {
+                      video = isVideo(copy);
+                    }
+
                     if (controller.attachmentList[itemIndex] == null) {
                       return Container(
                         padding: EdgeInsets.only(left: 24, right: 24),
@@ -157,7 +172,6 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                         controller.attachmentList[itemIndex].toString().isTxt ||
                         p.extension(controller.attachmentList[itemIndex].toString()) == '.csv';
 
-
                     return controller.isLoading
                         ? Center(
                             child: CircularProgressIndicator(color: BG_COLOR_4))
@@ -175,11 +189,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                   )
                                 :
                                 //HANDLE IMAGE OR VIDEO
-                                !isVideo(controller.attachmentList[itemIndex]
-                                        .toString())
-                                    ? controller.attachmentList[itemIndex]
-                                            .toString()
-                                            .contains('http')
+                                !video ? controller.attachmentList[itemIndex].toString().contains('http')
                                         ? InteractiveViewer.builder(
                                             maxScale: 2.5,
                                             minScale: 1.0,
@@ -187,17 +197,9 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                             panEnabled: true,
                                             builder: (context, viewPort) {
                                               return Image(
-                                                      image:
-                                                          CachedNetworkImageProvider(
-                                                              controller
-                                                                  .attachmentList[
-                                                                      itemIndex]
-                                                                  .toString()),
+                                                      image: CachedNetworkImageProvider(controller.attachmentList[itemIndex].toString()),
                                                       fit: BoxFit.cover,
-                                                      width:
-                                                          MediaQuery.of(context)
-                                                              .size
-                                                              .width)
+                                                      width: MediaQuery.of(context).size.width)
                                                   .onTap(() {
                                                 setState(() {
                                                   controller.barVisible =
@@ -214,9 +216,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                               //top left - 0, top right - 1, bottom right - 2, bottom left - 3
 
                                               return Image.file(
-                                                      File(controller
-                                                              .attachmentList[
-                                                          itemIndex]),
+                                                      File(controller.attachmentList[itemIndex]),
                                                       fit: BoxFit.cover,
                                                       width:
                                                           MediaQuery.of(context)
@@ -331,7 +331,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
                                       showLoading(context);
 
                                       String? pathCopy = controller.attachmentList[controller.currentIndex].toString();
-                                      int? extensionIndex = pathCopy.indexOf('?') == -1 ? null : pathCopy.indexOf('?');
+                                      int? extensionIndex = !pathCopy.contains('?') ? null : pathCopy.indexOf('?');
                                       String pathCut = pathCopy.substring(0, extensionIndex);
 
                                       if (isVideo(pathCut)) {

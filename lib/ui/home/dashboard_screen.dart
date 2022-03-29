@@ -207,6 +207,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
                     Navigator.of(context).pushNamed('/PostDetailScreen', arguments: {
                       'post': controller.postList[index],
                       'isLiked': controller.postLikes[controller.postList[index].id],
+                    }).then((value) {
+                      controller.initRefresh(context, () { });
                     });
                   });
                 },
