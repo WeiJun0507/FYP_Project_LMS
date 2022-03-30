@@ -1,9 +1,7 @@
 import 'dart:convert';
 
-import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-import 'package:fyp_lms/controller/dashboard/uploaded_file_controller.dart';
+import 'package:fyp_lms/controller/course/course_material_controller.dart';
 import 'package:fyp_lms/utils/constant.dart';
 import 'package:fyp_lms/utils/custom_field/common/round_corner_document_view.dart';
 import 'package:fyp_lms/utils/custom_field/common/round_corner_image_view.dart';
@@ -12,21 +10,20 @@ import 'package:fyp_lms/utils/dialog.dart';
 import 'package:fyp_lms/web_service/model/course_material/course_material.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:nb_utils/nb_utils.dart';
 import 'package:open_file/open_file.dart';
-
-import 'package:path/path.dart' as p;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:nb_utils/nb_utils.dart';
+import 'package:path/path.dart' as p;
 
-class UploadedFileScreen extends StatefulWidget {
-  const UploadedFileScreen({Key? key}) : super(key: key);
+class CourseMaterialScreen extends StatefulWidget {
+  const CourseMaterialScreen({Key? key}) : super(key: key);
 
   @override
-  State<UploadedFileScreen> createState() => _UploadedFileScreenState();
+  State<CourseMaterialScreen> createState() => _CourseMaterialPageState();
 }
 
-class _UploadedFileScreenState extends State<UploadedFileScreen> {
-  UploadedFileController controller = UploadedFileController();
+class _CourseMaterialPageState extends State<CourseMaterialScreen> {
+  CourseMaterialController controller = CourseMaterialController();
   SharedPreferences? _sPref;
 
   @override
@@ -46,6 +43,11 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
     controller.accountType = _sPref!.getInt('accountType');
 
+    final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
+    if (arguments['course'] != null) {
+      controller.course = arguments['course'];
+    }
+
     setState(() {
       controller.isLoading = true;
     });
@@ -60,13 +62,16 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
         setState(() {
           controller.isLoading = false;
         });
-        showInfoDialog(context, null, 'Some unexpected error occurred.');
+        showInfoDialog(context, null, 'Some unexpected error occurred.', callback: () {
+          Navigator.of(context).pop();
+        });
         return false;
       }
 
     });
 
   }
+
 
   @override
   Widget build(BuildContext context) {
@@ -84,10 +89,20 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
             margin: const EdgeInsets.only(left: x_large_padding, top: x_large_padding, bottom: normal_padding),
             width: MediaQuery.of(context).size.width,
             height: 40,
-            child: Text('Uploaded File', style: GoogleFonts.poppins().copyWith(
-              fontSize: TITLE,
-              fontWeight: FontWeight.w600,
-            ),),
+            child: Row(
+              children: [
+                IconButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  icon: Icon(Icons.arrow_back, size: 22.0),
+                ),
+                Text('Uploaded File', style: GoogleFonts.poppins().copyWith(
+                  fontSize: TITLE,
+                  fontWeight: FontWeight.w600,
+                ),),
+              ],
+            ),
           ),
 
           Expanded(
@@ -98,6 +113,7 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
                 shrinkWrap: true,
                 itemCount: controller.dateList.length,
                 itemBuilder: (BuildContext context, int index) {
+                  print(controller.dateList[index]);
                   return Container(
                     margin: const EdgeInsets.only(left: x_large_padding, top: small_padding, bottom: small_padding),
                     child: Column(
@@ -124,7 +140,7 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
                             height: 100,
                             child: ListView.builder(
                                 scrollDirection: Axis.horizontal,
-                                itemCount: controller.uploadedMaterialList[controller.dateList[index]] != null ? controller.uploadedMaterialList[controller.dateList[index]].length : 0,
+                                itemCount: controller.uploadedMaterialList[controller.dateList[index]].length,
                                 itemBuilder: (BuildContext context, int attachmentIndex) {
 
                                   CourseMaterial courseMaterial = controller.uploadedMaterialList[controller.dateList[index]][attachmentIndex];
@@ -163,7 +179,6 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
                                       //
                                       // String downloadedLink = await _storage.ref(courseMaterial!.id).getDownloadURL();
 
-                                      print(controller.attachmentsLink[attachmentIndex]);
 
                                       await launch(controller.attachmentsLink[attachmentIndex]);
                                     }else {
@@ -193,8 +208,10 @@ class _UploadedFileScreenState extends State<UploadedFileScreen> {
     );
   }
 
+
+
   @override
   void dispose() {
-
+    super.dispose();
   }
 }

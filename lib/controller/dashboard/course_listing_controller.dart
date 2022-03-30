@@ -238,12 +238,12 @@ class CourseListingController {
   }
 
   showCourse(BuildContext context, Course course, VoidCallback onCallback) {
-    user!.courseTaken!.add(course.id!);
+
     hideCourseList.remove(course);
     currentCourseList.add(course);
 
     _db.collection('account').doc(user!.id).update({
-      'currentEnrolledCourseCode': user!.courseTaken!,
+      'currentEnrolledCourseCode': accountType == 1 ? [...user!.courseTaken!, course.id] : [...user!.courseAssigned!, course.id],
     });
 
     onCallback();
@@ -251,7 +251,14 @@ class CourseListingController {
 
   hideCourse(BuildContext context, Course course, VoidCallback onCallback) {
 
-    List<String> currentList = user!.courseTaken!.where((element) => element != course.id).toList();
+    List<String> currentList = List.empty(growable: true);
+    if (accountType == 1) {
+      currentList = user!.currentEnrolledCourseCode!.where((element) => element != course.id).toList();
+    } else {
+      currentList = user!.currentEnrolledCourseCode!.where((element) => element != course.id).toList();
+
+    }
+
     currentCourseList.remove(course);
     hideCourseList.add(course);
 

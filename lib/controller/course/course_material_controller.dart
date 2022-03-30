@@ -1,10 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:flutter/cupertino.dart';
+import 'package:fyp_lms/web_service/model/course/course.dart';
 import 'package:fyp_lms/web_service/model/course_material/course_material.dart';
 import 'package:fyp_lms/web_service/model/user/account.dart';
+import 'package:flutter/material.dart';
 
-class UploadedFileController {
+class CourseMaterialController {
   //================================================VARIABLES======================================================
   final FirebaseFirestore _db = FirebaseFirestore.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -14,6 +15,8 @@ class UploadedFileController {
   String? accountName;
   int? accountType;
   Account? user;
+
+  Course? course;
 
   bool isLoading = false;
 
@@ -28,33 +31,34 @@ class UploadedFileController {
     attachmentsLink.clear();
     uploadedMaterialList.clear();
 
-    print('====================================FETCH POST MATERIAL========================================');
-    print('= AccountId: ${accountId} =');
-    final QuerySnapshot postMaterialSnapshot = await _db.collection('post_material').where('uploadedBy', isEqualTo: accountId).get();
+    print('====================================FETCH COURSE MATERIAL========================================');
+    final QuerySnapshot courseMaterialSnapshot = await _db.collection('course_material').where('courseBelonging', isEqualTo: course!.id).orderBy('createdDate', descending: true).get();
 
-    print('====================================POST MATERIAL DATA========================================');
-    print('= ${postMaterialSnapshot.docs} =');
+    print('====================================COURSE MATERIAL DATA========================================');
+    print('= ${courseMaterialSnapshot.docs} =');
 
-    if (postMaterialSnapshot.docs.isNotEmpty) {
+    if (courseMaterialSnapshot.docs.isNotEmpty) {
       //FIND ALL REFERENCE FROM THE SNAPSHOT
-      for (var documentSnapshot in postMaterialSnapshot.docs) {
-        print('=======================================POST MATERIAL DATA===========================================');
+      for (var documentSnapshot in courseMaterialSnapshot.docs) {
+        print('=======================================COURSE MATERIAL DATA===========================================');
         print('= ${documentSnapshot.data()} =');
+
         String id = (documentSnapshot.data() as Map<String, dynamic>)['id'];
         String uploadedBy = (documentSnapshot.data() as Map<String, dynamic>)['uploadedBy'];
         String createdDate = (documentSnapshot.data() as Map<String, dynamic>)['createdDate'];
         dateList.add(createdDate);
 
-        print('====================================GET POST MATERIAL DETAILS DATA========================================');
-        final fileMaterialSnapshot = await _db.collection('post_material').doc(id).collection(id).get();
-        print('====================================END POST MATERIAL DETAILS DATA========================================');
+        print('====================================GET COURSE MATERIAL DETAILS DATA========================================');
+        final fileMaterialSnapshot = await _db.collection('course_material').doc(id).collection(id).get();
+        print('====================================END COURSE MATERIAL DETAILS DATA========================================');
+        print('= ${fileMaterialSnapshot.docs} =');
+        print('====================================COURSE MATERIAL DETAILS DATA============================================');
 
         if (fileMaterialSnapshot.docs.isNotEmpty) {
           List<CourseMaterial> fileReference = List.empty(growable: true);
           for (var fileSnapshot in fileMaterialSnapshot.docs) {
-            print('====================================POST MATERIAL DETAILS============================================');
+            print('====================================COURSE MATERIAL DETAILS============================================');
             print('= ${fileSnapshot.data()}=');
-
             CourseMaterial courseMaterial = CourseMaterial.fromJson(fileSnapshot.data());
             fileReference.add(courseMaterial);
             attachmentsLink.add(courseMaterial.materialPath!);

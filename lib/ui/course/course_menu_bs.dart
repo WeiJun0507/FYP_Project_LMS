@@ -110,7 +110,7 @@ Widget courseMenuBS (BuildContext context, CourseDetailController controller){
                 ],
               ),
             ).onTap((){
-
+              Navigator.of(context).pop(1);
             }),
             Divider(
               height: 1,

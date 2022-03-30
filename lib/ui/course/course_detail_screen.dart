@@ -132,18 +132,27 @@ class _CourseDetailScreenState extends State<CourseDetailScreen> {
                                   switch(value) {
                                     case 1:
                                       //BROWSE COURSE MATERIAL
+                                      Navigator.of(context).pushNamed('/CourseMaterialScreen', arguments: {
+                                        'course': controller.course,
+                                      });
                                       break;
 
                                     case 2:
                                       //TODO: EDIT COURSE
                                       Navigator.of(context).pushNamed('/AddCourseScreen', arguments: {
                                         'course': controller.course,
-                                      }).then((value) {
+                                      }).then((value) async {
+                                        print(value);
                                         if (value != null && (value as Map)['result'] == 200) {
                                           controller.course!.id = value['newCourseId'];
                                         }
 
-                                        controller.refreshCourse(context);
+                                        final result = await controller.refreshCourse(context);
+                                        if (result) {
+                                          setState(() {
+                                            controller.isLoading = false;
+                                          });
+                                        }
                                       });
                                       break;
 

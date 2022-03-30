@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:fyp_lms/ui/auth_screen/create_account_screen.dart';
 import 'package:fyp_lms/ui/course/add_course_screen.dart';
+import 'package:fyp_lms/ui/course/course_material_screen.dart';
 import 'package:fyp_lms/ui/image/image_preview_screen.dart';
 import 'package:fyp_lms/ui/post/add_post_screen.dart';
 import 'package:fyp_lms/ui/course/course_detail_screen.dart';
@@ -32,6 +33,7 @@ Map<String, Widget Function(BuildContext)> routesName = {
 
   '/AddCourseScreen': (context) => const AddCourseScreen(),
   '/CourseDetailScreen': (context) => const CourseDetailScreen(),
+  '/CourseMaterialScreen': (context) => const CourseMaterialScreen(),
 
   '/AddPostScreen': (context) => const AddPostScreen(),
   '/PostDetailScreen': (context) => const PostDetailScreen(),

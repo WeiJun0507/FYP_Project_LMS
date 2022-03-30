@@ -53,6 +53,7 @@ Widget attachmentComment(
         itemCount: attachmentList.length,
         itemExtent: 56,
         padding: EdgeInsets.only(left: 14, right: 14),
+        physics: attachmentList.length <= 6 ? NeverScrollableScrollPhysics() : AlwaysScrollableScrollPhysics(),
         itemBuilder: (context, index) {
 
           String path = attachmentList[index];

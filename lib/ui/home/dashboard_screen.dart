@@ -120,15 +120,17 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         ),
                       ),
                     ),
-                    Container(
-                      margin: const EdgeInsets.only(top: x_large_padding, bottom: x_large_padding, right: large_padding),
-                      padding: const EdgeInsets.all(normal_padding),
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.all(Radius.circular(10.0)),
-                      ),
-                      child: Icon(Icons.person, color: BG_COLOR_4, size: 22,),
-                    ),
+                    // Container(
+                    //   margin: const EdgeInsets.only(top: x_large_padding, bottom: x_large_padding, right: large_padding),
+                    //   padding: const EdgeInsets.all(normal_padding),
+                    //   decoration: BoxDecoration(
+                    //     color: Colors.white,
+                    //     borderRadius: BorderRadius.all(Radius.circular(10.0)),
+                    //   ),
+                    //   child: Icon(Icons.person, color: BG_COLOR_4, size: 22,).onTap(() {
+                    //
+                    //   }),
+                    // ),
                   ],
                 ),
               ),
@@ -198,11 +200,9 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 shrinkWrap: true,
                 itemCount: controller.postList.length,
                 itemBuilder: (BuildContext ctx, int index) {
-                  return Container(
-                    child: postItem(context, controller.postList[index], controller, () {
-                      setState(() {});
-                    }, controller.postLikes[controller.postList[index].id]!)
-                  ).onTap(() {
+                  return postItem(context, controller.postList[index], controller, () {
+                    setState(() {});
+                  }, controller.postLikes[controller.postList[index].id]!).onTap(() {
                     //ENTER POST DETAIL PAGE
                     Navigator.of(context).pushNamed('/PostDetailScreen', arguments: {
                       'post': controller.postList[index],
@@ -215,6 +215,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 padding: const EdgeInsets.only(bottom: x_large_padding),
               ),
             )
+
 
           ],
         ),

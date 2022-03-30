@@ -217,6 +217,8 @@ class PostDetailController {
         'commentsCount': commentsCount,
       }).then((value) {
         Navigator.of(context).pop();
+        Navigator.of(context).pop();
+
         //success handled
         ScaffoldMessenger.of(context).showSnackBar(SnackBar(
           backgroundColor: Colors.green[400],
@@ -247,7 +249,7 @@ class PostDetailController {
           ),
         ));
 
-        Navigator.of(context).pop();
+
         //refresh post detail screen
         refreshPost(context, onCallback);
         return true;
@@ -296,22 +298,26 @@ class PostDetailController {
     print('===============================================ADD POST MATERIAL===================================================');
     DocumentSnapshot snapshot = await _db
         .collection('post_material')
-        .doc('${post!.id}').get();
-    List attachment = (snapshot.data() as Map<String, dynamic>)['fileList'];
+        .doc('${post!.courseBelonging}_${createdDate}_${file.path}').get();
+
+    List attachment = List.empty(growable: true);
+    if (snapshot.data() != null) {
+      attachment = (snapshot.data() as Map<String, dynamic>)['fileList'];
+    }
 
     _db
         .collection('post_material')
-        .doc('${post!.id}').set({
+        .doc('${post!.courseBelonging}_${createdDate}_${file.path}').set({
       'courseBelonging': post!.courseBelonging,
       'createdDate': post!.createdDate,
-      'id': '${post!.courseBelonging}_$createdDate',
+      'id': '${post!.courseBelonging}_${createdDate}_${file.path}',
       'fileList': [...attachment, '${post!.courseBelonging}_${createdDate}_${file.path}'],
       'uploadedBy': user!.id,
     });
     _db
         .collection('post_material')
-        .doc('${post!.id}')
-        .collection('${post!.id}')
+        .doc('${post!.courseBelonging}_${createdDate}_${file.path}')
+        .collection('${post!.courseBelonging}_${createdDate}_${file.path}')
         .doc('${post!.courseBelonging}_${createdDate}_${file.path}')
         .set(courseMaterial.toJson())
         .then((_) {}, onError: (e) {

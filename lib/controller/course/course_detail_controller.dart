@@ -120,9 +120,10 @@ class CourseDetailController {
   }
 
   uploadFile(BuildContext context, PlatformFile file) async {
+
     showLoading(context);
 
-    final uploadedFile = _storage.ref().child('${course!.courseCode}_${course!.courseName}/${file.name}').putFile(File(file.path!));
+    final uploadedFile = _storage.ref().child('${course!.courseCode}_${course!.courseName}_${file.name}').putFile(File(file.path!));
     uploadedFile.then((TaskSnapshot snapshot) async {
       final downloadLink = await snapshot.ref.getDownloadURL();
 
@@ -130,12 +131,13 @@ class CourseDetailController {
       courseMaterial.materialPath = downloadLink;
       courseMaterial.materialName = file.name;
       courseMaterial.id = '${course!.courseCode}_${course!.courseName}_${file.name}';
-      courseMaterial.courseBelonging = course!.courseCode;
+      courseMaterial.courseBelonging = course!.id;
       courseMaterial.createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
       courseMaterial.fileSize = file.size.toString();
-      courseMaterial.materialType = file.name.isVideo ? 'video' : file.name.isImage ? 'image' : 'document';
+      courseMaterial.materialType = file.path.isVideo ? 'video' : file.path.isImage ? 'image' : 'document';
       courseMaterial.submittedBy = accountId;
 
+      print('================================================GET COURSE MATERIAL DATA=====================================');
       DocumentSnapshot courseMaterialSnapshot = await _db
           .collection('course_material')
           .doc('${course!.id}').get();
@@ -145,20 +147,22 @@ class CourseDetailController {
       if (courseMaterialSnapshot.data() != null) {
         attachment = (courseMaterialSnapshot.data() as Map<String, dynamic>)['fileList'];
       }
+      print('================================================END COURSE MATERIAL DATA=====================================');
 
+      print('================================================BEGIN COURSE MATERIAL DATA UPLOAD=====================================');
       _db
           .collection('course_material')
-          .doc('${course!.courseCode}_${course!.courseName}').set({
+          .doc('${course!.courseCode}_${course!.courseName}_${file.name}').set({
         'courseBelonging': '${course!.courseCode}_${course!.courseName}',
-        'createdDate': course!.createdAt,
+        'createdDate': DateUtil().getDatetimeFormatServer().format(DateTime.now()),
         'id': '${course!.courseCode}_${course!.courseName}_${file.name}',
         'fileList': [...attachment, '${course!.courseCode}_${course!.courseName}_${file.name}'],
         'uploadedBy': user!.id.toString(),
       });
 
       _db.collection('course_material')
-          .doc('${course!.courseCode}_${course!.courseName}')
-          .collection('${course!.courseCode}_${course!.courseName}')
+          .doc('${course!.courseCode}_${course!.courseName}_${file.name}')
+          .collection('${course!.courseCode}_${course!.courseName}_${file.name}')
           .doc('${course!.courseCode}_${course!.courseName}_${file.name}')
           .set(courseMaterial.toJson()).then((_) {
         Navigator.of(context).pop();
@@ -167,7 +171,7 @@ class CourseDetailController {
             children: [
               // ICON
               Container(
-                padding: const EdgeInsets.all(large_padding),
+                padding: const EdgeInsets.only(left: large_padding, right: large_padding, top: small_padding, bottom: small_padding),
                 decoration: BoxDecoration(
                   color: Colors.white10,
                   borderRadius: BorderRadius.all(Radius.circular(100)),
@@ -275,10 +279,21 @@ class CourseDetailController {
           account.courseTaken = newCourseTaken;
           _db.collection('account').doc(account.id).set(account.toJson());
         }
+        if (account.currentEnrolledCourseCode != null && account.currentEnrolledCourseCode!.isNotEmpty) {
+          List<String> newCourseTaken = account.currentEnrolledCourseCode!.where((e) => e != course!.id).toList();
+          account.currentEnrolledCourseCode = newCourseTaken;
+          _db.collection('account').doc(account.id).set(account.toJson());
+        }
       } else {
         if (account.courseAssigned != null && account.courseAssigned!.isNotEmpty) {
           List<String> newCourseAssigned = account.courseAssigned!.where((e) => e != course!.id).toList();
           account.courseTaken = newCourseAssigned;
+          _db.collection('account').doc(account.id).set(account.toJson());
+        }
+
+        if (account.currentEnrolledCourseCode != null && account.currentEnrolledCourseCode!.isNotEmpty) {
+          List<String> newCourseTaken = account.currentEnrolledCourseCode!.where((e) => e != course!.id).toList();
+          account.currentEnrolledCourseCode = newCourseTaken;
           _db.collection('account').doc(account.id).set(account.toJson());
         }
       }

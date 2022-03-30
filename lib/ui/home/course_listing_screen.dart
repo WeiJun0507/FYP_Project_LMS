@@ -51,6 +51,7 @@ class _CourseListingScreenState extends State<CourseListingScreen> {
 
   @override
   Widget build(BuildContext context) {
+
     return Scaffold(
       backgroundColor: pageBackground,
       appBar: AppBar(

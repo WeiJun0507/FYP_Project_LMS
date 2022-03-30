@@ -109,7 +109,7 @@ class _PostDetailScreenState extends State<PostDetailScreen> {
                           color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.post!.color!)]),
                         ).onTap(() => Navigator.of(context).pop()),
                         actions: [
-                          IconButton(
+                          controller.accountType == 1 ? const SizedBox() : IconButton(
                             icon: Icon(Icons.more_vert, color: GeneralUtil().getTextColor(controller.colorSelectionColor[controller.colorSelection.indexOf(controller.post!.color!)])),
                             onPressed: () {
                               showModalBottomSheet(

@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     icon: Column(
                       children: const [
                         Icon(
-                          Icons.home,
+                          Icons.auto_stories,
                           color: COLOR_INVALID,
                         ),
                         SizedBox(height: small_padding),
@@ -93,7 +93,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     activeIcon: Column(
                       children: const [
                         Icon(
-                          Icons.home,
+                          Icons.auto_stories,
                           color: BG_COLOR_4,
                         ),
                         SizedBox(height: small_padding),
@@ -126,7 +126,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     icon: Column(
                       children: const [
                         Icon(
-                          Icons.emoji_people,
+                          Icons.person,
                           color: COLOR_INVALID,
                         ),
                         SizedBox(height: small_padding),
@@ -135,7 +135,7 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
                     activeIcon: Column(
                       children: const [
                         Icon(
-                          Icons.emoji_people,
+                          Icons.person,
                           color: BG_COLOR_4,
                         ),
                         SizedBox(height: small_padding),
@@ -158,16 +158,15 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
             controller: _tabController,
             children: const [
               //DASHBOARD
-              DashboardScreen(),
+              KeepAliveState(child: DashboardScreen()),
 
               //COURSE
-              CourseListingScreen(),
+              KeepAliveState(child: CourseListingScreen()),
 
               //UPLOADED PAGE
-              UploadedFileScreen(),
-
+              KeepAliveState(child: UploadedFileScreen()),
               //PROFILE
-              ProfileScreen(),
+              KeepAliveState(child: ProfileScreen()),
             ],
           ),
         ),
@@ -178,4 +177,24 @@ class _HomeScreenState extends State<HomeScreen> with SingleTickerProviderStateM
   void dispose() {
     super.dispose();
   }
+}
+
+class KeepAliveState extends StatefulWidget {
+  final Widget child;
+
+  const KeepAliveState({Key? key, required this.child}) : super(key: key);
+
+  @override
+  State<KeepAliveState> createState() => _KeepAliveStateState();
+}
+
+class _KeepAliveStateState extends State<KeepAliveState> with AutomaticKeepAliveClientMixin {
+  @override
+  Widget build(BuildContext context) {
+    super.build(context);
+    return widget.child;
+  }
+
+  @override
+  bool get wantKeepAlive => true;
 }
