@@ -39,6 +39,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
   String genderSelect = 'male';
 
   compileData(BuildContext context) async {
+    print('hello');
     if (_usernameController.text.isEmpty) {
       showInfoDialog(context, null, 'Username cannot be empty.');
       return;
@@ -67,6 +68,7 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
     account.phoneNumber = _phoneController.text;
     account.accountType = 1;
     account.verified = _auth.currentUser!.emailVerified.toString();
+
 
     showLoading(context);
     await _database.collection('account').doc(_auth.currentUser!.uid).set(account.toJson()).then((value) async {
@@ -283,10 +285,10 @@ class _CreateAccountScreenState extends State<CreateAccountScreen> {
                         borderRadius: BorderRadius.all(Radius.circular(50)),
                       ),
                       child: Icon(Icons.arrow_forward_ios_rounded, color: Colors.white,),
-                    ),
-                  ).onTap(() {
-                    compileData(context);
-                  })
+                    ).onTap(() {
+                      compileData(context);
+                    }),
+                  )
                 ],
               ),
             ),

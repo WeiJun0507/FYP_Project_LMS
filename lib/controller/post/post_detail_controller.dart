@@ -184,17 +184,17 @@ class PostDetailController {
     List<String> uploadedAttachment = List.empty(growable: true);
 
     int index = 0;
+    final createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
     for (var attachment in attachments) {
       //UPLOAD FILE
       final uploaded =
-      await uploadFile(context, File(attachments[index]), index);
+      await uploadFile(context, File(attachments[index]), index, createdDate);
       index++;
 
       //REPLACE ATTACHMENTS DATA INSIDE POST COLLECTION
       uploadedAttachment.add(uploaded);
     }
 
-    final createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
 
     Comment newComment = Comment();
     newComment.createdDate = createdDate;
@@ -270,9 +270,8 @@ class PostDetailController {
 
   }
 
-  uploadFile(BuildContext context, File file, int index) async {
+  uploadFile(BuildContext context, File file, int index, String createdDate) async {
     print('=========================================PUTTING FILE INTO FIRECLOUD============================================');
-    final createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
 
     final TaskSnapshot uploadedFile = await _storage
         .ref()
@@ -285,8 +284,7 @@ class PostDetailController {
     courseMaterial.materialName = file.path;
     courseMaterial.id = '${post!.courseBelonging}_${createdDate}_${file.path}';
     courseMaterial.courseBelonging = post!.courseBelonging;
-    courseMaterial.createdDate =
-        DateUtil().getDatetimeFormatServer().format(DateTime.now());
+    courseMaterial.createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
     courseMaterial.fileSize =
         File(attachmentsFull[index]).readAsBytesSync().length.toString();
     courseMaterial.materialType = file.path.isVideo

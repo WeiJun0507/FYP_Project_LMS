@@ -75,6 +75,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
         }),
         child: CustomScrollView(
           controller: scrollController,
+          physics: AlwaysScrollableScrollPhysics(),
           slivers: [
             //PROFILE ICON
             SliverToBoxAdapter(
@@ -145,7 +146,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             //UPCOMING COURSE
             SliverToBoxAdapter(
-              child: controller.isLoading ? Center(child: CircularProgressIndicator(color: BG_COLOR_4,),) : CarouselSlider.builder(
+              child: controller.isLoading ? Center(child: CircularProgressIndicator(color: BG_COLOR_4,),) : controller.upcomingCourseList.isEmpty ? const SizedBox() : CarouselSlider.builder(
                 itemCount: controller.upcomingCourseList.length,
                 itemBuilder: (BuildContext ctx, int index, int pageIndex) {
                   return upcomingEventWidget(context, controller, controller.upcomingCourseList[index], controller.upcomingDateList[index]);

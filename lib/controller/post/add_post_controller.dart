@@ -403,8 +403,7 @@ class AddPostController {
     courseMaterial.materialName = file.path;
     courseMaterial.id = '${courseBelonging}_${createdDate}_${file.path}';
     courseMaterial.courseBelonging = courseBelonging;
-    courseMaterial.createdDate =
-        DateUtil().getDatetimeFormatServer().format(DateTime.now());
+    courseMaterial.createdDate = DateUtil().getDatetimeFormatServer().format(DateTime.now());
     courseMaterial.fileSize =
         File(attachmentsFull![index]).readAsBytesSync().length.toString();
     courseMaterial.materialType = file.path.isVideo
