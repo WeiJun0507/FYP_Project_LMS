@@ -31,25 +31,22 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void initState() {
     super.initState();
     SharedPreferences.getInstance().then((value) {
-      setState(() {
-        _sPref = value;
-        initializeData();
-      });
+      _sPref = value;
+      initializeData();
     });
+
   }
 
-  initializeData() async {
+  initializeData() {
     controller.accountId = _sPref!.getString('account');
     controller.accountName = _sPref!.getString('username');
     controller.user = Account.fromJson(jsonDecode(_sPref!.getString('accountInfo')!));
     controller.accountType = _sPref!.getInt('accountType');
 
-    if (!controller.hasInit) {
-      controller.hasInit = true;
-      await controller.initRefresh(context, () {
-        setState(() {});
-      });
-    }
+    controller.initRefresh(context, () {
+      setState(() {});
+    });
+
   }
 
   fetchPosts() async {
@@ -97,7 +94,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                         margin: const EdgeInsets.only(top: x_large_padding, bottom: x_large_padding, right: large_padding, left: x_large_padding),
                         child: RichText(
                           text: TextSpan(
-                            text: 'WELCOME, ',
+                            text: 'WELCOME,   ',
                             style: GoogleFonts.poppins().copyWith(
                               fontSize: TITLE,
                               fontWeight: FontWeight.w600,
@@ -105,7 +102,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                             ),
                             children: [
                               TextSpan(
-                                text: controller.user!.displayName!.toUpperCase(),
+                                text: controller.accountName ?? 'Undefined',
                                 style: GoogleFonts.poppins().copyWith(
                                   fontSize: BIG_TITLE,
                                   fontWeight: FontWeight.bold,
@@ -195,7 +192,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             ),
 
             SliverToBoxAdapter(
-              child: ListView.builder(
+              child: controller.isLoading ? Center(child: CircularProgressIndicator(color: BG_COLOR_4,),) : ListView.builder(
                 controller: scrollController,
                 shrinkWrap: true,
                 itemCount: controller.postList.length,

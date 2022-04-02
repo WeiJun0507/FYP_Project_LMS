@@ -17,7 +17,7 @@ class DashboardController {
 
   int pageNo = 1;
   bool allowNextPage = true,
-      isLoading = false, hasInit = false;
+      isLoading = true, hasInit = false;
 
   List<Course> upcomingCourseList = List.empty(growable: true);
   List<Map<String, dynamic>> upcomingDateList = List.empty(growable: true);
@@ -54,19 +54,16 @@ class DashboardController {
   //'==========================================METHODS=================================================='
 
 
-  Future<void> initRefresh(BuildContext context, VoidCallback onCallback) async {
+  Future<void> initRefresh(BuildContext context, VoidCallback onCallback) {
     //FETCH UPCOMING COURSE
-    await fetchUpcomingCourse(context, onCallback);
+    return fetchUpcomingCourse(context, onCallback);
   }
 
-  fetchUpcomingCourse(BuildContext context, VoidCallback onCallback) async {
+  Future fetchUpcomingCourse(BuildContext context, VoidCallback onCallback) async {
     upcomingCourseList.clear();
     upcomingDateList.clear();
     postList.clear();
     postLikes.clear();
-
-    isLoading = true;
-    onCallback();
 
     print(
         '======================================BEGIN FETCH ACCOUNT===========================================');
@@ -79,7 +76,9 @@ class DashboardController {
     print(
         '======================================ACCOUNT DATA===================================================');
 
-    user = Account.fromJson(account.data() as Map<String, dynamic>);
+    if (account.data() != null) {
+      user = Account.fromJson(account.data() as Map<String, dynamic>);
+    }
 
     List<String>? courseTaken;
     List<String>? courseAssigned;
@@ -97,12 +96,12 @@ class DashboardController {
 
     if (accountType == 1) {
       if (courseTaken != null) {
-        courseTaken.forEach((courseCode) async {
+        for (var courseCode in courseTaken) {
           print('======================================BEGIN FETCH COURSE LIST===========================================');
           DocumentSnapshot snapshot = await _db.collection('Course').doc(courseCode).get();
 
           print('======================================END FETCH COURSE LIST===========================================');
-          //print('= ${snapshot.data()} =');
+          print('= ${snapshot.data()} =');
           print('======================================COURSE DATA===========================================');
 
           if (snapshot.data() != null) {
@@ -141,14 +140,11 @@ class DashboardController {
               );
             }
           }
-          onCallback();
-        });
-        isLoading = false;
-        onCallback();
+        }
       }
     } else {
       if (courseAssigned != null) {
-        courseAssigned.forEach((courseCode) async {
+        for (var courseCode in courseAssigned) {
           print(
               '======================================BEGIN FETCH COURSE LIST===========================================');
           DocumentSnapshot snapshot = await _db.collection('Course').doc(courseCode).get();
@@ -195,19 +191,19 @@ class DashboardController {
               );
             }
           }
-          onCallback();
-        });
+        }
       }
+      onCallback();
     }
 
-    await fetchPost(context, onCallback);
+    return fetchPost(context, onCallback);
   }
 
-  fetchPost(BuildContext context, VoidCallback onCallback) async {
+  Future fetchPost(BuildContext context, VoidCallback onCallback) async {
     print('======================================BEGIN FETCH POST==================================================');
 
     if (accountType == 1) {
-      user!.courseTaken!.forEach((element) async {
+      for(var element in user!.courseTaken!) {
         print('======================================QUERY PARAMETER===================================================');
         print('= $element =');
         QuerySnapshot snapshot = await _db.collection('post')
@@ -221,7 +217,7 @@ class DashboardController {
 
 
         if (snapshot.docs.isNotEmpty) {
-          snapshot.docs.forEach((QueryDocumentSnapshot document) async {
+          for (var document in snapshot.docs) {
             Post post = Post.fromJson(document.data() as Map<String, dynamic>);
             postList.add(post);
             await _db.collection('post').doc(post.id).collection(user!.id.toString()).get().then((QuerySnapshot value) {
@@ -230,15 +226,15 @@ class DashboardController {
               } else {
                 postLikes[post.id.toString()] = false;
               }
+
             });
-          });
+          }
         }
-      });
-
-
-
+      }
+      isLoading = false;
+      onCallback();
     } else {
-      user!.courseAssigned!.forEach((element) async {
+      for (var element in user!.courseAssigned!) {
         QuerySnapshot snapshot = await _db.collection('post')
             .where('courseBelonging', isEqualTo: element)
             .get();
@@ -249,7 +245,7 @@ class DashboardController {
 
 
         if (snapshot.docs.isNotEmpty) {
-          snapshot.docs.forEach((QueryDocumentSnapshot document) async {
+          for (var document in snapshot.docs) {
             Post post = Post.fromJson(document.data() as Map<String, dynamic>);
             postList.add(post);
             await _db.collection('post').doc(post.id).collection(user!.id.toString()).get().then((QuerySnapshot value) {
@@ -259,13 +255,12 @@ class DashboardController {
                 postLikes[post.id!] = false;
               }
             });
-          });
-          onCallback();
+          }
         }
-      });
+      }
+      isLoading = false;
+      onCallback();
     }
-    isLoading = false;
-    onCallback();
   }
 
   Future<bool> addLikes(String postId, String likeBy, int likeCount, VoidCallback onCallback) async {

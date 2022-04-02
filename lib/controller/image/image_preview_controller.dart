@@ -19,12 +19,12 @@ class ImagePreviewController {
   int? accountType;
 
   //CLICKED INDEX
-  late int currentIndex;
+  int currentIndex = 0;
 
   Course? course;
   Post? post;
 
-  bool isLoading = false, barVisible = true, fromCourse = false, fromPost = false;
+  bool isLoading = true, barVisible = true, fromCourse = false, fromPost = false;
 
   int onScreenPointer = 0;
 
@@ -43,12 +43,12 @@ class ImagePreviewController {
 
   //=============================    METHODS   ================================
 
-  initialization(BuildContext context, VoidCallback onCallback) async {
+  Future initialization(BuildContext context, VoidCallback onCallback) async {
 
-    for (int index = 0; index < attachmentList.length; index++) {
+    for (var attachment in attachmentList) {
 
-      var element = attachmentList[index];
-      var element2 = attachmentList[index];
+      var element = attachment;
+      var element2 = attachment;
 
 
       int extensionIndex = element2.indexOf('?');
@@ -67,9 +67,9 @@ class ImagePreviewController {
           VideoPlayerController videoController = VideoPlayerController.network(element);
           await videoController.initialize();
 
-          videoPlayerController.putIfAbsent(index, () => videoController);
+          videoPlayerController.putIfAbsent(attachment, () => videoController);
           customVideoPlayerController.putIfAbsent(
-              index,
+              attachment,
               () => ChewieController(
                     videoPlayerController: videoController,
                     autoPlay: false,
@@ -80,9 +80,9 @@ class ImagePreviewController {
           VideoPlayerController videoController = VideoPlayerController.file(File(element));
           await videoController.initialize();
 
-          videoPlayerController.putIfAbsent(index, () => videoController);
+          videoPlayerController.putIfAbsent(attachment, () => videoController);
           customVideoPlayerController.putIfAbsent(
-              index,
+              attachment,
               () => ChewieController(
                     videoPlayerController: videoController,
                     autoPlay: false,
@@ -91,9 +91,9 @@ class ImagePreviewController {
                   ));
         }
       }
-      onCallback();
     }
     convertFileToImage(context, attachmentList[currentIndex], onCallback);
+    isLoading = false;
     onCallback();
   }
 

@@ -50,7 +50,7 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
     });
   }
 
-  initialize() async {
+  initialize() {
     //_sPref.setString('accountInfo', jsonEncode(createdUser));
     controller.accountId = _sPref!.getString('account');
     controller.accountName = _sPref!.getString('username');
@@ -60,42 +60,41 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
     final arguments = (ModalRoute.of(context)?.settings.arguments ?? <String, dynamic>{}) as Map;
 
     if (arguments['currentIndex'] != null) {
-     setState(() {
-       controller.currentIndex = arguments['currentIndex'];
-     });
+      controller.currentIndex = arguments['currentIndex'];
+      print('hello');
     }
 
     if (arguments['attachments'] != null) {
-      setState(() {
-        controller.attachmentListOri = arguments['attachments'];
-        controller.attachmentList = arguments['attachments'].map((String attachment) {
-          if (attachment.contains('http')) {
-            String? path = attachment;
-            String? pathCopy = attachment;
-            int extensionIndex = path.indexOf('?');
 
-            if (extensionIndex > 0) {
-              if (pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpg' &&
-                  pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpeg' &&
-                  pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'png') {
+      controller.attachmentListOri = arguments['attachments'];
+      controller.attachmentList = arguments['attachments'].map((String attachment) {
+        if (attachment.contains('http')) {
+          String? path = attachment;
+          String? pathCopy = attachment;
+          int extensionIndex = path.indexOf('?');
 
-                bool video = isVideo(attachment.substring(0, extensionIndex));
+          if (extensionIndex > 0) {
+            if (pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpg' &&
+                pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'jpeg' &&
+                pathCopy.substring(pathCopy.indexOf('.', extensionIndex - 5) + 1, extensionIndex) != 'png') {
 
-                if (!video) {
-                  path = path.substring(0, extensionIndex);
-                }
+              bool video = isVideo(attachment.substring(0, extensionIndex));
 
+              if (!video) {
+                path = path.substring(0, extensionIndex);
               }
-            } else {
-              path = path;
-            }
 
-            return path;
+            }
           } else {
-            return attachment;
+            path = path;
           }
-        }).toList();
-      });
+
+          return path;
+        } else {
+          return attachment;
+        }
+      }).toList();
+
     }
 
     if (arguments['course'] != null) {
@@ -108,18 +107,14 @@ class _ImagePreviewScreenState extends State<ImagePreviewScreen> {
       controller.fromPost = true;
     }
 
-
-
-
-    await controller.initialization(context, () {
-      setState(() {
-        controller.isLoading = false;
-      });
+    controller.initialization(context, () {
+      setState(() {});
     });
   }
 
   @override
   Widget build(BuildContext context) {
+    print('hello1');
     return Scaffold(
       backgroundColor: Colors.black,
       body: Container(
