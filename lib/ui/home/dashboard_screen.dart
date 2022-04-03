@@ -45,6 +45,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     controller.initRefresh(context, () {
       setState(() {});
+    }).then((value) {
+      setState(() {
+        controller.isLoading = false;
+      });
     });
 
   }

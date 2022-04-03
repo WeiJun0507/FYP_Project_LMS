@@ -245,6 +245,10 @@ class AddPostController {
       errorMessage ??= 'notes cannot be empty.';
     }
 
+    if (courseBelonging == null && courseBelonging!.isEmpty) {
+      errorMessage ??= 'Course Selection cannot be empty';
+    }
+
     if (errorMessage != null && errorMessage.isNotEmpty) {
       showInfoDialog(context, null, errorMessage);
       return;

@@ -83,7 +83,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
       color: Colors.blue,
       shape: CircleBorder(),
     ),
-    child: Text(GeneralUtil().getShortName('W J'), style: GoogleFonts.poppins().copyWith(
+    child: Text(GeneralUtil().getShortName(user!.displayName), style: GoogleFonts.poppins().copyWith(
       fontSize: BIG_TITLE,
       color: Colors.white,
     ),),

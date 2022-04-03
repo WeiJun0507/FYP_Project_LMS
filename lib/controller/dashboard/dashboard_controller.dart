@@ -203,63 +203,67 @@ class DashboardController {
     print('======================================BEGIN FETCH POST==================================================');
 
     if (accountType == 1) {
-      for(var element in user!.courseTaken!) {
-        print('======================================QUERY PARAMETER===================================================');
-        print('= $element =');
-        QuerySnapshot snapshot = await _db.collection('post')
-            .where('courseBelonging', isEqualTo: element)
-            .get();
+      if (user!.courseTaken != null && user!.courseTaken!.isNotEmpty) {
+        for(var element in user!.courseTaken!) {
+          print('======================================QUERY PARAMETER===================================================');
+          print('= $element =');
+          QuerySnapshot snapshot = await _db.collection('post')
+              .where('courseBelonging', isEqualTo: element)
+              .get();
 
-        print('======================================END FETCH POST==================================================');
-        print('= ${user!.courseTaken} =');
-        print('= ${snapshot.docs} =');
-        print('======================================POST DATA ==================================================');
+          print('======================================END FETCH POST==================================================');
+          print('= ${user!.courseTaken} =');
+          print('= ${snapshot.docs} =');
+          print('======================================POST DATA ==================================================');
 
 
-        if (snapshot.docs.isNotEmpty) {
-          for (var document in snapshot.docs) {
-            Post post = Post.fromJson(document.data() as Map<String, dynamic>);
-            postList.add(post);
-            await _db.collection('post').doc(post.id).collection(user!.id.toString()).get().then((QuerySnapshot value) {
-              if (value.docs.isNotEmpty) {
-                postLikes[post.id.toString()] = true;
-              } else {
-                postLikes[post.id.toString()] = false;
-              }
+          if (snapshot.docs.isNotEmpty) {
+            for (var document in snapshot.docs) {
+              Post post = Post.fromJson(document.data() as Map<String, dynamic>);
+              postList.add(post);
+              await _db.collection('post').doc(post.id).collection(user!.id.toString()).get().then((QuerySnapshot value) {
+                if (value.docs.isNotEmpty) {
+                  postLikes[post.id.toString()] = true;
+                } else {
+                  postLikes[post.id.toString()] = false;
+                }
 
-            });
+              });
+            }
           }
         }
+        isLoading = false;
+        onCallback();
       }
-      isLoading = false;
-      onCallback();
     } else {
-      for (var element in user!.courseAssigned!) {
-        QuerySnapshot snapshot = await _db.collection('post')
-            .where('courseBelonging', isEqualTo: element)
-            .get();
+      if (user!.courseAssigned != null && user!.courseAssigned!.isNotEmpty) {
+        for (var element in user!.courseAssigned!) {
+          QuerySnapshot snapshot = await _db.collection('post')
+              .where('courseBelonging', isEqualTo: element)
+              .get();
 
-        print('======================================END FETCH POST==================================================');
-        print('= ${snapshot.docs} =');
-        print('======================================POST DATA ==================================================');
+          print('======================================END FETCH POST==================================================');
+          print('= ${snapshot.docs} =');
+          print('======================================POST DATA ==================================================');
 
 
-        if (snapshot.docs.isNotEmpty) {
-          for (var document in snapshot.docs) {
-            Post post = Post.fromJson(document.data() as Map<String, dynamic>);
-            postList.add(post);
-            await _db.collection('post').doc(post.id).collection(user!.id.toString()).get().then((QuerySnapshot value) {
-              if (value.docs.isNotEmpty) {
-                postLikes[post.id!] = true;
-              } else {
-                postLikes[post.id!] = false;
-              }
-            });
+          if (snapshot.docs.isNotEmpty) {
+            for (var document in snapshot.docs) {
+              Post post = Post.fromJson(document.data() as Map<String, dynamic>);
+              postList.add(post);
+              await _db.collection('post').doc(post.id).collection(user!.id.toString()).get().then((QuerySnapshot value) {
+                if (value.docs.isNotEmpty) {
+                  postLikes[post.id!] = true;
+                } else {
+                  postLikes[post.id!] = false;
+                }
+              });
+            }
           }
         }
+        isLoading = false;
+        onCallback();
       }
-      isLoading = false;
-      onCallback();
     }
   }
 
